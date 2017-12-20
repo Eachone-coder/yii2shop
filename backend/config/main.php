@@ -10,16 +10,35 @@ return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
+    //添加语言
+    'language'=>'zh-CN',
+
+    //默认路由
+    //'defaultRoute' => 'book',
+
     'bootstrap' => ['log'],
     'modules' => [],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
+        /*'assetManager'=>[
+            'bundles'=>[
+                'yii\web\JqueryAsset'=>[
+                    'jsOptions'=>[
+                        'position'=>\yii\web\View::POS_HEAD,
+                    ]
+                ]
+            ]
+        ],*/
         'user' => [
-            'identityClass' => 'common\models\User',
+            //指定实现认证接口的类 一般就是账号对应的类
+            //common
+            'identityClass' => 'backend\models\User',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
+            //设置默认的登录地址
+            //'loginUrl' => ['login/index'],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
@@ -37,14 +56,18 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+
         'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
+            'class'=>'yii\web\urlManager',  //指定实现类
+            'enablePrettyUrl' => true,      //开启URL美化
+            'showScriptName' => false,      //是否显示index.php
+            //'suffix'=>'html',
             'rules' => [
+                //配置规则
+                //'add'=>'goods/add',
             ],
         ],
-        */
+
     ],
     'params' => $params,
 ];
