@@ -17,7 +17,14 @@ return [
     //'defaultRoute' => 'book',
 
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'redactor' => [
+            'class' => 'yii\redactor\RedactorModule',
+            'uploadDir' => '@webroot/Uploads/article',
+            'uploadUrl' => 'http://www.admin.shop.com',
+            'imageAllowExtensions'=>['jpg','png','gif']
+        ],
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',

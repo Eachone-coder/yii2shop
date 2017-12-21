@@ -28,14 +28,19 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'My Company',
+        'brandLabel' => '清水商城B2C',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
+        ['label' => '文章', 'url' => ['/article/index']],
+        ['label' => '品牌', 'url' => ['/brand/index']],
+        ['label' => '文章分类', 'url' => ['/article-category/index']],
+        ['label' => '商品分类', 'url' => ['/goods-category/index']],
+        ['label' => '商品', 'url' => ['/goods/index']],
+        ['label' => '管理员', 'url' => ['/user/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];

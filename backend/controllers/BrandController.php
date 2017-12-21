@@ -45,10 +45,12 @@ class BrandController extends \yii\web\Controller
                         $model->logo='/'.$dirName.$fileName;
                     }
                 }
+                //默认
+                $model->logo='/Upload/Brand/20171220/5a3a2326df1d6.jpg';
                 //保存
                 $model->save(false);
                 //跳转
-                \Yii::$app->session->setFlash('success','修改品牌成功');
+                \Yii::$app->session->setFlash('success','新增品牌成功');
                 //重定向
                 return $this->redirect(Url::to(['brand/index']));
             }
@@ -56,6 +58,8 @@ class BrandController extends \yii\web\Controller
                 var_dump($model->getErrors());
             }
         }
+        //默认选中隐藏
+        $model->status=0;
         return $this->render('alter',['model'=>$model]);
     }
     public function actionUpdate($id){
@@ -84,7 +88,7 @@ class BrandController extends \yii\web\Controller
                 //保存
                 $model->save();
                 //跳转
-                \Yii::$app->session->setFlash('success','新增品牌成功');
+                \Yii::$app->session->setFlash('success','修改品牌成功');
                 //重定向
                 return $this->redirect(Url::to(['brand/index']));
             }
