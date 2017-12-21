@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use backend\models\Article;
+use backend\models\ArticleCategory;
 use backend\models\ArticleDetail;
 use yii\data\Pagination;
 use yii\helpers\Url;
@@ -22,25 +23,78 @@ class ArticleController extends Controller{
         $model=new Article();
         $sonModel=new ArticleDetail();
         $request=\Yii::$app->request;
+        $category=ArticleCategory::find()->where(['status'=>[0,1]])->all();
         if ($request->isPost){
             $model->load($request->post());
             $sonModel->load($request->post());
-            if ($model->validate()){
-                $model->create_time=strtotime($model->date_time);
-                $sonModel->content=$model->details;
-                $model->save();
+            if ($model->validate() && $sonModel->validate()){
+                //处理文章文章详情
+                   $sonModel->save();
+                   //处理文章
+                   $model->create_time=strtotime($model->date_time);
+                   $model->save();
+
+                   \Yii::$app->session->setFlash('success','新增文章成功');
+                    return $this->redirect(Url::to(['article/index']));
+            }else{
+                var_dump($model->getErrors());die;
+            }
+        }
+        $model->status=0;
+        return $this->render('alter',['model'=>$model,'sonModel'=>$sonModel,'category'=>$category]);
+    }
+    public function actionUpdate($id){
+        $model=Article::findOne($id);
+        $sonModel=ArticleDetail::findOne($id);
+        $request=\Yii::$app->request;
+        $category=ArticleCategory::find()->where(['status'=>[0,1]])->all();
+        if ($request->isPost){
+            $model->load($request->post());
+            $sonModel->load($request->post());
+            if ($model->validate() && $sonModel->validate()){
+                //处理文章文章详情
                 $sonModel->save();
+                //处理文章
+
+                $model->create_time=strtotime($model->date_time);
+                $model->save();
+
                 \Yii::$app->session->setFlash('success','新增文章成功');
                 return $this->redirect(Url::to(['article/index']));
             }else{
                 var_dump($model->getErrors());die;
             }
         }
-        return $this->render('alter',['model'=>$model]);
+        return $this->render('alter',['model'=>$model,'sonModel'=>$sonModel,'category'=>$category]);
     }
-    public function actionUpdate($id){
-
+    public function actionDelete($id){
+        $row=Article::findOne(['id'=>$id]);
+        if ($row){
+            $row->status=-1;
+            $row->save();
+            echo json_encode(['status'=>$id]);
+        }
+        else{
+            echo json_encode(['status'=>$row->getErrors()]);
+        }
     }
-    public function actionDelete($id){}
+    public function actionShow($id){
+        $model=Article::findOne($id);
+        $sonModel=ArticleDetail::findOne($id);
+        $category=ArticleCategory::find()->where(['status'=>[0,1]])->all();
+        return $this->render('show',['model'=>$model,'sonModel'=>$sonModel,'category'=>$category]);
+    }
 
+    public function actions()
+    {
+        return [
+            'ueditor'=>[
+                'class' => 'common\widgets\ueditor\UeditorAction',
+                'config'=>[
+                    'imageUrlPrefix' => "", /* 图片访问路径前缀 */
+                    'imagePathFormat' => "/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+                ]
+            ]
+        ];
+    }
 }

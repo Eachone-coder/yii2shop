@@ -34,14 +34,44 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => '文章', 'url' => ['/article/index']],
-        ['label' => '品牌', 'url' => ['/brand/index']],
-        ['label' => '文章分类', 'url' => ['/article-category/index']],
-        ['label' => '商品分类', 'url' => ['/goods-category/index']],
-        ['label' => '商品', 'url' => ['/goods/index']],
-        ['label' => '管理员', 'url' => ['/user/index']],
-    ];
+    $menuItems=[
+        [
+            'label'=>'品牌',
+            'items'=>[
+                ['label' => '品牌列表', 'url' =>['/brand/index']],
+
+                ['label' => '添加品牌', 'url' => ['/brand/add']],
+            ]
+        ],
+        [
+                'label'=>'文章',
+                'items'=>[
+                    ['label' => '文章', 'url' => ['/article/index']],
+                    ['label' => '文章分类', 'url' => ['/article-category/index']],
+                ],
+        ],
+        [
+            'label'=>'商品',
+            'items'=>[
+                ['label' => '商品列表', 'url' =>['/goods/index']],
+                ['label' => '商品分类', 'url' => ['/goods-category/index']],
+            ]
+        ],
+        [
+            'label'=>'管理员',
+            'items'=>[
+                ['label' => '管理员列表', 'url' => ['/user/index']],
+                ['label' => '权限管理', 'url' => ['/brand/add']],
+            ]
+        ],
+        [
+            'label'=>'回收站',
+            'items'=>[
+                ['label' => '文章回收站', 'url' => ['/trash/index']],
+                ['label' => '品牌回收站', 'url' => ['/trash/index']],
+            ]
+        ],
+        ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
@@ -72,7 +102,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; 清水商城B2C <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>

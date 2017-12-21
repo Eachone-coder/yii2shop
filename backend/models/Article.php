@@ -33,7 +33,7 @@ class Article extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'intro', 'sort', 'status',], 'required'],
+            [['name', 'intro', 'sort', 'status','article_category_id'], 'required'],
             [['intro'], 'string'],
             [['sort', 'status', 'create_time'], 'integer'],
             ['date_time','string'],
@@ -57,5 +57,8 @@ class Article extends \yii\db\ActiveRecord
             'date_time' => '创建时间',
             'details' => '详情',
         ];
+    }
+    public function getCategory(){
+        return $this->hasOne(ArticleCategory::className(),['id'=>'article_category_id']);
     }
 }

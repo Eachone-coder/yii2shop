@@ -1,0 +1,24 @@
+
+html,body{margin:0;}
+header{
+	top:0;
+	height: 125px;
+	width: 100%;
+	background: white;
+}
+
+main{
+	margin-top: 28px;
+}
+
+
+
+
+// Not demo related
+body{
+		font-size: 1.25rem;
+}
+main,header{
+	padding: 10px 10%;
+	box-sizing: border-box;
+}

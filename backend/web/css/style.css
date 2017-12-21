@@ -1,0 +1,25 @@
+html, body {
+  margin: 0;
+}
+
+header {
+  margin-top: 0px;
+  height: 140px;
+  width: 100%;
+  background: white;
+}
+
+main {
+  margin-top: 28px;
+}
+
+
+body {
+  font-family: "Open Sans";
+  font-size: 1.25rem;
+}
+
+main, header {
+  padding: 10px 10%;
+  box-sizing: border-box;
+}

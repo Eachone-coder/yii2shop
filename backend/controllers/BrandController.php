@@ -4,11 +4,21 @@ namespace backend\controllers;
 
 use backend\models\Brand;
 use yii\data\Pagination;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
+// 引入鉴权类
+use Qiniu\Auth;
+// 引入上传类
+use Qiniu\Storage\UploadManager;
 
 class BrandController extends \yii\web\Controller
 {
+    public $enableCsrfValidation=false;
+
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
         $model=Brand::find()->where(['status' => [0,1]]);
@@ -19,36 +29,22 @@ class BrandController extends \yii\web\Controller
             'pageSize' => 5,
         ]);
 
-        $rows=$model->limit($pager->limit)->offset($pager->offset)->all();
+        $rows=$model->addOrderBy('sort')->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['rows'=>$rows,'pager'=>$pager]);
     }
 
+    /**
+     * @return string|\yii\web\Response
+     */
     public function actionAdd(){
         $model=new Brand();
         $request=\Yii::$app->request;
         if ($request->isPost){
             //绑定数据
             $model->load($request->post());
-            //处理上传图片
-            $model->uploadFile=UploadedFile::getInstance($model,'uploadFile');
-            //默认
             if ($model->validate()){
-                //如果上传则移动
-                if ($model->uploadFile){
-                    $dirName='Upload/Brand/'.date('Ymd').'/';
-                    //创建路径
-                    if (!is_dir($dirName)){
-                        mkdir($dirName,0777,true);
-                    }
-                    $fileName=uniqid().'.'.$model->uploadFile->extension;
-                    if ($model->uploadFile->saveAs(\Yii::getAlias('@webroot').'/'.$dirName.$fileName)){
-                        $model->logo='/'.$dirName.$fileName;
-                    }
-                }
-                //默认
-                $model->logo='/Upload/Brand/20171220/5a3a2326df1d6.jpg';
                 //保存
-                $model->save(false);
+                $model->save();
                 //跳转
                 \Yii::$app->session->setFlash('success','新增品牌成功');
                 //重定向
@@ -60,7 +56,8 @@ class BrandController extends \yii\web\Controller
         }
         //默认选中隐藏
         $model->status=0;
-        return $this->render('alter',['model'=>$model]);
+        $img='';
+        return $this->render('alter',['model'=>$model,'img'=>$img]);
     }
     public function actionUpdate($id){
         $model=Brand::findOne(['id'=>$id]);
@@ -69,22 +66,7 @@ class BrandController extends \yii\web\Controller
             //post方式
             //绑定数据
             $model->load($request->post());
-            //处理上传图片
-            $model->uploadFile=UploadedFile::getInstance($model,'uploadFile');
-            //默认
             if ($model->validate()){
-                //如果上传则移动
-                if ($model->uploadFile){
-                    $dirName='/Upload/Brand/'.date('Ymd').'/';
-                    //创建路径
-                    if (!is_dir($dirName)){
-                        mkdir($dirName,0777,true);
-                    }
-                    $fileName=uniqid().'.'.$model->uploadFile->extension;
-                    if ($model->uploadFile->saveAs(\Yii::getAlias('@webroot').$dirName.$fileName)){
-                        $model->logo=$dirName.$fileName;
-                    }
-                }
                 //保存
                 $model->save();
                 //跳转
@@ -97,7 +79,8 @@ class BrandController extends \yii\web\Controller
             }
         }
         //get方式
-        return $this->render('alter',['model'=>$model]);
+        $img=$model->logo;
+        return $this->render('alter',['model'=>$model,'img'=>$img]);
     }
 
     public function actionDelete($id){
@@ -112,4 +95,54 @@ class BrandController extends \yii\web\Controller
         }
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function actionUpload(){
+        $model=UploadedFile::getInstanceByName('file');
+        //如果上传则移动
+        if ($model){
+            $dirName='Upload/Brand/'.date('Ymd').'/';
+            //创建路径
+            if (!is_dir($dirName)){
+                mkdir($dirName,0777,true);
+            }
+            $fileName=uniqid().'.'.$model->extension;
+            if ($model->saveAs(\Yii::getAlias('@webroot').'/'.$dirName.$fileName)){
+                // 需要填写你的 Access Key 和 Secret Key
+                $accessKey ="rWoVtEsy7XxYkUt0ZputvXtAunPTQxJiacYhb5nT";
+                $secretKey = "iobjvc7w3THiggBPgvlXQmyXU1iPv3Kselam5Tlw";
+                $bucket = "shop";
+
+                // 构建鉴权对象
+                $auth = new Auth($accessKey, $secretKey);
+
+                // 生成上传 Token
+                $token = $auth->uploadToken($bucket);
+
+                // 要上传文件的本地路径
+                $filePath = \Yii::getAlias('@webroot').'/'.$dirName.$fileName;
+
+                // 上传到七牛后保存的文件名
+                $key = '/'.$dirName.$fileName;
+
+                // 初始化 UploadManager 对象并进行文件的上传。
+                $uploadMgr = new UploadManager();
+
+                // 调用 UploadManager 的 putFile 方法进行文件的上传。
+                list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
+                //echo "\n====> putFile result: \n";
+                if ($err !== null) {
+//                    var_dump($err);
+                    echo Json::encode(['status'=>0]);
+                }
+                else {
+                    echo Json::encode(['url'=>'http://p1aurjprl.bkt.clouddn.com//'.$dirName.$fileName]);
+//
+                }
+            }else{
+                echo Json::encode(['status'=>0]);
+            }
+        }
+    }
 }

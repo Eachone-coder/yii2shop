@@ -26,6 +26,7 @@ class ArticleDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['content'], 'required'],
             [['content'], 'string'],
         ];
     }
