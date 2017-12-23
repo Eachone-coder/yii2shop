@@ -24,7 +24,8 @@
         "kartik-v/yii2-widget-datepicker": "@dev",
         "qiniu/php-sdk": "^7.2",
         "creocoder/yii2-nested-sets": "^0.9.0",
-        "kartik-v/yii2-tree-manager": "@dev"
+        "kartik-v/yii2-tree-manager": "@dev",
+        "kucha/ueditor": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
