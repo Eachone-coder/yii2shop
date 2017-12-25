@@ -19,17 +19,22 @@ class GoodsGalleryController extends Controller{
         $result=$model->save();
         $id=\Yii::$app->db->getLastInsertID();
         if ($result){
-            Json::encode(['status'=>$id]);
+            return Json::encode(['status'=>$id]);
         }
         else{
-            Json::encode(['status'=>0]);
+            return Json::encode(['status'=>0]);
         }
     }
-    public function actionUpdate($id){
 
-    }
     public function actionDelete($id){
-
+        $row=GoodsGallery::findOne(['id'=>$id]);
+        if ($row){
+            $row->delete();
+            echo json_encode(['status'=>$id]);
+        }
+        else{
+            echo json_encode(['status'=>0]);
+        }
     }
     public function actionUpload(){
         $model=UploadedFile::getInstanceByName('file');

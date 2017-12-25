@@ -29,15 +29,6 @@ return [
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
-        /*'assetManager'=>[
-            'bundles'=>[
-                'yii\web\JqueryAsset'=>[
-                    'jsOptions'=>[
-                        'position'=>\yii\web\View::POS_HEAD,
-                    ]
-                ]
-            ]
-        ],*/
         'user' => [
             //指定实现认证接口的类 一般就是账号对应的类
             //common
@@ -45,7 +36,7 @@ return [
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
             //设置默认的登录地址
-            //'loginUrl' => ['login/index'],
+           'loginUrl' => ['login/index'],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend

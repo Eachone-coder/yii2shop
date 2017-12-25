@@ -15,11 +15,17 @@ echo <<<HTML
             <div id="filePicker">选择图片</div>
         </div>
 HTML;
+echo '<table class="table">';
 foreach ($rows as $row):
-    echo '<img src="'.$row->path.'" id="'.$row->id.'">';
+    echo '<tr  id="gallery'.$row->id.'" data-id="'.$row->id.'"><td><img src="'.$row->path.'"></td><td>
+'.\yii\bootstrap\Html::submitButton('删除',['class'=>'btn btn-danger btn-sm']).'
+</td></tr>';
 endforeach;
+echo '</table>';
 $html=\yii\helpers\Url::to(['goods-gallery/upload']);   //上传地址
 $alterHtml=\yii\helpers\Url::to(['goods-gallery/add']); //添加地址
+$delHtml=\yii\helpers\Url::to(['goods-gallery/delete']).'?id='; //删除地址
+
 $js=<<<JS
 // 初始化Web Uploader
             var uploader = WebUploader.create({
@@ -64,16 +70,16 @@ $js=<<<JS
             uploader.on( 'uploadSuccess', function( file,response ) {
                  $( '#'+file.id ).addClass('upload-state-done');
                  $.post('$alterHtml',{"goods_id":$goods_id,"path":response.url},function(data) {
+                     console.debug(data);
                     if (data.status!=0){
                         //追加html
-                        var str='<img src="'+response.url+'" id="'+data.status+'">';
-                        $("#uploader-demo").append(str);
+                        var str='<tr id="gallery'+data.status+'" data-id="'+data.status+'"><td><img src="'+response.url+'"></td><td><button type="submit" class="btn btn-danger btn-sm">删除</button></td></tr>';
+                        $('.table'). append(str);
                     }
                     else {
                         alert('添加失败');
                     }
-                 })
-                 //$('#goods-logo').val(response.url);
+                 },'json');
             });
 
 // 文件上传失败，显示上传出错。
@@ -88,5 +94,21 @@ uploader.on( 'uploadError', function( file ) {
 
     error.text('上传失败');
 });
+
+$('.btn-danger').on('click',function() {
+    var id=$(this).closest('tr').attr('data-id')
+    $.getJSON('$delHtml'+id,function(data) {
+        if (confirm('此操作会强制删除图片!是否确定删除?')){
+            if (data.status>0){
+                var tab='#gallery'+(data.status);
+                $(tab).fadeOut();
+                alert('删除成功');
+            }
+            else{
+                alert('删除失败');
+            }
+        }
+    });
+})   
 JS;
 $this->registerJs($js);

@@ -42,6 +42,10 @@ class GoodsDayCount extends \yii\db\ActiveRecord
             'count' => '商品数',
         ];
     }
+
+    /**
+     * @return array|string[]
+     */
     public static function primaryKey()
     {
         return ['day'];
