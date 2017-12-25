@@ -30,11 +30,7 @@ class GoodsController extends Controller
         $goods = new GoodsSearchForm();
         $request = \Yii::$app->request;
         $query = Goods::find()->where(['status' => 1]);
-        //分页
-        $pager = new Pagination([
-            'totalCount' => $query->count(),
-            'pageSize' => 5,
-        ]);
+
         $goods->load($request->get());
         if (count($goods)) {
             $search = [];
@@ -51,7 +47,14 @@ class GoodsController extends Controller
                 $search = ['and', ['<=', 'shop_price', $goods->maxPrice]];
             }
         }
-        $rows = $query->andWhere($search)->limit($pager->limit)->offset($pager->offset)->all();
+        //分页
+        $query=$query->andWhere($search);
+        $pager = new Pagination([
+            'totalCount' => $query->count(),
+            'pageSize' => 2,
+        ]);
+
+        $rows = $query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index', ['goods' => $goods, 'rows' => $rows, 'pager' => $pager]);
     }
 
@@ -60,15 +63,17 @@ class GoodsController extends Controller
         $model = new Goods();
         $introModel = new GoodsIntro();
         $brands = Brand::find()->select(['id', 'name'])->all();
+        array_unshift($brands,['id'=>'','name'=>'【请选择】']);
         $request = \Yii::$app->request;
         if ($request->isPost) {
             $model->load($request->post());
             $introModel->load($request->post());
-            $goodsDayCount = GoodsDayCount::findOne(['day' => $model->date]);
+            $date=date('Y-m-d');
+            $goodsDayCount = GoodsDayCount::findOne(['day' => $date]);
             if ($model->validate()) {
                 if ($goodsDayCount == null) {
                     $goodsDayCount = new GoodsDayCount();
-                    $goodsDayCount->day = $model->date;
+                    $goodsDayCount->day = $date;
                     $goodsDayCount->count = 1;
                 } else {
                     $goodsDayCount->count += 1;
@@ -76,7 +81,6 @@ class GoodsController extends Controller
                 //货号新增商品自动生成sn,规则为年月日+今天的第几个商品,比如2016053000001
                 //查询添加数
                 $model->sn = date('Ymd') . str_pad($goodsDayCount->count, 5, 0, 0);
-                $model->create_time = strtotime($model->date);
                 $model->save();
                 $introModel->save();
                 $goodsDayCount->save();
@@ -84,7 +88,6 @@ class GoodsController extends Controller
                 return $this->redirect(Url::to(['goods/index']));
             } else {
                 var_dump($model->getErrors());
-                die;
             }
         }
 
@@ -100,23 +103,22 @@ class GoodsController extends Controller
         $model = Goods::findOne($id);
         $introModel = GoodsIntro::findOne($id);
         $brands = Brand::find()->select(['id', 'name'])->all();
+        array_unshift($brands,['id'=>'','name'=>'【请选择】']);
         $request = \Yii::$app->request;
         if ($request->isPost) {
             $model->load($request->post());
             $introModel->load($request->post());
             if ($model->validate()) {
-                $model->create_time = strtotime($model->date);
                 $model->save();
                 $introModel->save();
                 \Yii::$app->session->setFlash('success', '新增成功');
                 return $this->redirect(Url::to(['goods/index']));
             } else {
                 var_dump($model->getErrors());
-                die;
             }
         }
-
-        return $this->render('alter', ['model' => $model, 'introModel' => $introModel, 'brands' => $brands]);
+        $img=$model->logo;
+        return $this->render('upload', ['model' => $model, 'introModel' => $introModel, 'brands' => $brands,'img'=>$img]);
     }
 
     /**

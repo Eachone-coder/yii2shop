@@ -80,7 +80,7 @@ class BrandController extends \yii\web\Controller
         }
         //get方式
         $img=$model->logo;
-        return $this->render('alter',['model'=>$model,'img'=>$img]);
+        return $this->render('update',['model'=>$model,'img'=>$img]);
     }
 
     public function actionDelete($id){

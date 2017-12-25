@@ -19,7 +19,7 @@
             <td><?php echo substr($row->intro,'0','51')?>...</td>
             <td><?php echo $row->category->name?></td>
             <td><?php echo $row->sort?></td>
-            <td><?php echo ($row->status==0)?'隐藏':'正常'?></td>
+            <td><?php echo $row->status==0?'隐藏':'正常'?></td>
             <td><?php echo date('Y-m-d',$row->create_time)?></td>
             <td>
                 <?php echo \yii\bootstrap\Html::a('查看<span class="glyphicon glyphicon-eye-open"></span>',\yii\helpers\Url::to(['article/show','id'=>$row->id]),['class'=>'btn btn-success btn-sm'])?>
@@ -29,7 +29,7 @@
         </tr>
     <?php endforeach;?>
     <tr>
-        <td colspan="7"><?php echo \yii\bootstrap\Html::a('新增文章',\yii\helpers\Url::to(['article/add']),['class'=>'btn btn-info btn-lg'])?></td>
+        <td colspan="7"><?php echo \yii\bootstrap\Html::a('新增文章<span class="glyphicon glyphicon-plus"></span>',\yii\helpers\Url::to(['article/add']),['class'=>'btn btn-info btn-lg'])?></td>
     </tr>
 </table>
 <?php

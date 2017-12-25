@@ -5,11 +5,11 @@
 </style>
 <h1>商品列表</h1>
 <?php
-$form=\yii\bootstrap\ActiveForm::begin(['method' => 'get','options' => ['class'=>'form-inline','role'=>'form'],]);
+$form=\yii\bootstrap\ActiveForm::begin(['method' => 'get','action' => \yii\helpers\Url::to(['goods/index']),'options' => ['class'=>'form-inline','role'=>'form'],]);
     echo $form->field($goods,'name')->textInput(['placeholder'=>'商品名称',])->label('');
-    echo $form->field($goods,'sn')->textInput(['type'=>'number','placeholder'=>'商品货号'])->label('');
-    echo $form->field($goods,'minPrice')->textInput(['type'=>'number','placeholder'=>'最小价格'])->label('');
-    echo $form->field($goods,'maxPrice')->textInput(['type'=>'number','placeholder'=>'最大价格'])->label('');
+    echo $form->field($goods,'sn')->textInput(['type'=>'tel','placeholder'=>'商品货号'])->label('');
+    echo $form->field($goods,'minPrice')->textInput(['type'=>'tel','placeholder'=>'最小价格'])->label('');
+    echo $form->field($goods,'maxPrice')->textInput(['type'=>'tel','placeholder'=>'最大价格'])->label('');
     echo \yii\bootstrap\Html::submitButton('<span class="glyphicon glyphicon-search"></span>搜索',['class'=>'btn btn-info']);
 \yii\bootstrap\ActiveForm::end();
 ?>

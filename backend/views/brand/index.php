@@ -26,13 +26,13 @@
             <td><?php echo $row->sort?></td>
             <td><?php echo ($row->status==-1)?'删除':($row->status==0?'隐藏':'正常')?></td>
             <td>
-                <?=\yii\bootstrap\Html::a("<span class='glyphicon glyphicon-pencil'><span>",\yii\helpers\Url::to(['brand/update','id'=>$row->id]),['class'=>'btn btn-primary btn-sm'])?>
-                <?=\yii\bootstrap\Html::submitButton("<span class='glyphicon glyphicon-trash'><span>",['class'=>'btn btn-danger btn-sm','id'=>$row->id])?>
+                <?=\yii\bootstrap\Html::a("修改<span class='glyphicon glyphicon-pencil'><span>",\yii\helpers\Url::to(['brand/update','id'=>$row->id]),['class'=>'btn btn-primary btn-sm'])?>
+                <?=\yii\bootstrap\Html::submitButton("删除<span class='glyphicon glyphicon-trash'><span>",['class'=>'btn btn-danger btn-sm','id'=>$row->id])?>
             </td>
         </tr>
     <?php endforeach;?>
     <tr>
-        <td colspan="6"><?=\yii\bootstrap\Html::a("<span class='glyphicon glyphicon-plus'></span>",\yii\helpers\Url::to(['brand/add']),['class'=>'btn btn-info btn-lg'])?></td>
+        <td colspan="6"><?=\yii\bootstrap\Html::a("增加<span class='glyphicon glyphicon-plus'></span>",\yii\helpers\Url::to(['brand/add']),['class'=>'btn btn-info btn-lg'])?></td>
     </tr>
 </table>
 

@@ -73,12 +73,12 @@ AppAsset::register($this);
         ],
         ];
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/login/index']];
+        $menuItems[] = ['label' => '登录', 'url' => ['/login/index']];
     } else {
         $menuItems[] = '<li>'
             . Html::beginForm(['/login/logout'], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
+                '退出 (' . Yii::$app->user->identity->username . ')',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()

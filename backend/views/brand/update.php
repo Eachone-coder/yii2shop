@@ -16,7 +16,11 @@ $form = \yii\bootstrap\ActiveForm::begin();
     <!--dom结构部分-->
     <div id="uploader-demo">
         <!--用来存放item-->
-        <div id="fileList" class="uploader-list"></div>
+        <div id="fileList" class="uploader-list">
+            <div id="WU_FILE_0" class="file-item thumbnail upload-state-done">
+                <img src="'.$img.'" width="130px">
+            </div>
+        </div>
         <div id="filePicker">选择图片</div>
     </div>
     ';

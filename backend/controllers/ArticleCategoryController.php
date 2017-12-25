@@ -34,6 +34,7 @@ class ArticleCategoryController extends \yii\web\Controller
                 var_dump($model->getErrors());
             }
         }
+        $model->status=0;
         return $this->render('add',['model'=>$model]);
     }
 

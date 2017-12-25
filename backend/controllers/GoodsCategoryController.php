@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use backend\models\GoodsCategory;
+use yii\helpers\Json;
 use yii\helpers\Url;
 
 class GoodsCategoryController extends \yii\web\Controller {
@@ -39,9 +40,14 @@ class GoodsCategoryController extends \yii\web\Controller {
                     $parent=GoodsCategory::findOne(['id'=>$model->parent_id]);
                     $model->appendTo($parent);
                 }else{
-                    $model->makeRoot();
+                    if ($model->getOldAttribute('parent_id')){
+                        $model->makeRoot();
+                    }
+                    else{
+                        $model->save();
+                    }
                 }
-                \Yii::$app->session->setFlash('success','新增商品分类成功');
+                \Yii::$app->session->setFlash('success','修改商品分类成功');
                 return $this->redirect(Url::to(['goods-category/index']));
             }
         }
@@ -49,7 +55,19 @@ class GoodsCategoryController extends \yii\web\Controller {
     }
 
     public function actionDelete($id){
-
+        $row=GoodsCategory::findOne(['id'=>$id]);
+        if ($row){
+            if ($row->lft=$row->rgt-1){
+                $row->delete();
+                echo Json::encode(['status'=>$id]);
+            }
+            else{
+                echo Json::encode(['status'=>'该分类存在子类,不能删除']);
+            }
+        }
+        else{
+            echo Json::encode(['status'=>0]);
+        }
     }
 
 }

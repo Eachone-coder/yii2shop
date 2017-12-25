@@ -23,9 +23,9 @@ use yii\db\ActiveRecord;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    public $password;
-    public $oldPassword;
-    public $newPassword;
+    public $oldPassword;    //旧密码
+    public $password;       //确认密码
+    public $newPassword;    //新密码
 
     /**
      * @inheritdoc
@@ -48,17 +48,19 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
+            ['email','match','pattern' => '/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/'],
         ];
     }
 
-    /**
+
+        /**
      * @inheritdoc
      */
     public function attributeLabels()
     {
         return [
             'username' => '用户名',
-            'password' => '密码',
+            'password' => '确认密码',
             'oldPassword' => '旧密码',
             'newPassword' => '新密码',
             'password_hash' => '密码',
@@ -68,6 +70,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'last_login_ip' => '最后登录ip',
         ];
     }
+
+
+
     public function behaviors()
     {
         return [
@@ -75,6 +80,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
                 'class'=>TimestampBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT=>['created_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE=>['updated_at']
                 ],
             ],
         ];
@@ -87,6 +93,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Null should be returned if such an identity cannot be found
      * or the identity is not in an active state (disabled, deleted, etc.)
      */
+    //根据指定的用户ID查找 认证模型类的实例，当你需要使用session来维持登录状态的时候会用到这个方法。
     public static function findIdentity($id)
     {
         return static::findOne(['id'=>$id,]);
@@ -101,15 +108,18 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Null should be returned if such an identity cannot be found
      * or the identity is not in an active state (disabled, deleted, etc.)
      */
+    //根据指定的存取令牌查找 认证模型类的实例，该方法用于 通过单个加密令牌认证用户的时候（比如无状态的RESTful应用）。
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        // TODO: Implement findIdentityByAccessToken() method.
+        return static::findOne(['access_token' => $token]);
+
     }
 
     /**
      * Returns an ID that can uniquely identify a user identity.
      * @return string|int an ID that uniquely identifies a user identity.
      */
+    //获取该认证实例表示的用户的ID
     public function getId()
     {
         return $this->id;
@@ -127,9 +137,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return string a key that is used to check the validity of a given identity ID.
      * @see validateAuthKey()
      */
+    //获取基于 cookie 登录时使用的认证密钥。 认证密钥储存在 cookie 里并且将来会与服务端的版本进行比较以确保 cookie的有效性。
     public function getAuthKey()
     {
-        // TODO: Implement getAuthKey() method.
+        return $this->auth_key;
     }
 
     /**
@@ -140,8 +151,22 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return bool whether the given auth key is valid.
      * @see getAuthKey()
      */
+    //是基于 cookie 登录密钥的 验证的逻辑的实现
     public function validateAuthKey($authKey)
     {
-        // TODO: Implement validateAuthKey() method.
+        return $this->getAuthKey() === $authKey;
+    }
+
+
+    //使用下面的代码在 user 表中生成和存储每个用户的认证密钥。
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->auth_key = Yii::$app->security->generateRandomString();
+            }
+            return true;
+        }
+        return false;
     }
 }

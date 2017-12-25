@@ -95,10 +95,10 @@ uploader.on( 'uploadError', function( file ) {
     error.text('上传失败');
 });
 
-$('.btn-danger').on('click',function() {
-    var id=$(this).closest('tr').attr('data-id')
-    $.getJSON('$delHtml'+id,function(data) {
-        if (confirm('此操作会强制删除图片!是否确定删除?')){
+$('.table').on('click','.btn-danger',function() {
+    if (confirm('此操作会强制删除图片!是否确定删除?')){
+            var id=$(this).closest('tr').attr('data-id');
+            $.getJSON('$delHtml'+id,function(data) {
             if (data.status>0){
                 var tab='#gallery'+(data.status);
                 $(tab).fadeOut();
@@ -107,8 +107,8 @@ $('.btn-danger').on('click',function() {
             else{
                 alert('删除失败');
             }
-        }
-    });
-})   
+        });
+    }
+});   
 JS;
 $this->registerJs($js);

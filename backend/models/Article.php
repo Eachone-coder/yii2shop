@@ -3,6 +3,8 @@
 namespace backend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "article".
@@ -17,8 +19,6 @@ use Yii;
  */
 class Article extends \yii\db\ActiveRecord
 {
-    public $date_time;
-    public $details;
     /**
      * @inheritdoc
      */
@@ -36,9 +36,7 @@ class Article extends \yii\db\ActiveRecord
             [['name', 'intro', 'sort', 'status','article_category_id'], 'required'],
             [['intro'], 'string'],
             [['sort', 'status', 'create_time'], 'integer'],
-            ['date_time','string'],
             [['name'], 'string', 'max' => 50],
-            [['details'], 'string'],
         ];
     }
 
@@ -48,17 +46,26 @@ class Article extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
             'name' => '名称',
             'intro' => '简介',
             'article_category_id' => '文章分类ID',
             'sort' => '排序',
             'status' => '状态',
-            'date_time' => '创建时间',
-            'details' => '详情',
         ];
     }
     public function getCategory(){
         return $this->hasOne(ArticleCategory::className(),['id'=>'article_category_id']);
+    }
+
+    public  function behaviors()
+    {
+        return [
+            [
+                'class'=>TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT=>['create_time']
+                ],
+            ],
+        ];
     }
 }

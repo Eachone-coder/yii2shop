@@ -7,7 +7,7 @@
 $this->registerCssFile('@web/zTree/css/zTreeStyle/zTreeStyle.css');
 $form=\kartik\form\ActiveForm::begin();
     echo $form->field($model,'name')->textInput();
-    echo $form->field($model,'parent_id')->hiddenInput();
+    echo $form->field($model,'parent_id')->textInput();
 $this->registerJsFile('@web/zTree/js/jquery.ztree.core.js',['depends'=>\yii\web\JqueryAsset::className()]);
 $this->registerJsFile('@web/zTree/js/jquery.ztree.excheck.js',['depends'=>\yii\web\JqueryAsset::className()]);
 $this->registerJsFile('@web/zTree/js/jquery.ztree.exedit.js',['depends'=>\yii\web\JqueryAsset::className()]);
@@ -31,7 +31,10 @@ $js =<<<JS
 	            }
             };
             var zNodes=$nodes;
-			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			var treeObj=$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			treeObj.expandAll(true);
+			var node = treeObj.getNodeByParam("id",'$model->parent_id', null);
+			treeObj.selectNode(node);
 	
 JS;
 $this->registerJs($js);

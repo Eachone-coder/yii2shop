@@ -3,6 +3,8 @@
 namespace backend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "goods".
@@ -24,7 +26,6 @@ use Yii;
  */
 class Goods extends \yii\db\ActiveRecord
 {
-    public $date;
     /**
      * @inheritdoc
      */
@@ -39,7 +40,7 @@ class Goods extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name','logo','goods_category_id', 'brand_id', 'market_price', 'shop_price', 'stock', 'status', 'sort', 'date', ], 'required'],
+            [['name','logo','goods_category_id', 'brand_id', 'market_price', 'shop_price', 'stock', 'status', 'sort', ], 'required'],
             [['goods_category_id', 'brand_id', 'stock', 'is_on_sale', 'status', 'sort', 'create_time', 'view_times'], 'integer'],
             [['market_price', 'shop_price'], 'number'],
             [['name', 'sn'], 'string', 'max' => 20],
@@ -65,7 +66,18 @@ class Goods extends \yii\db\ActiveRecord
             'is_on_sale' => '是否在售',
             'status' => '状态',
             'sort' => '排序',
-            'date' => '添加时间',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class'=>TimestampBehavior::className(),
+                'attributes' =>[
+                    ActiveRecord::EVENT_BEFORE_INSERT=>['create_time']
+                ],
+            ]
         ];
     }
 }

@@ -9,6 +9,9 @@ use yii\helpers\Url;
 use yii\web\Controller;
 
 class ArticleController extends Controller{
+    /**
+     * @return string
+     */
     public function actionIndex(){
         $model=Article::find()->where(['status'=>[0,1]]);
 
@@ -19,11 +22,16 @@ class ArticleController extends Controller{
         $rows=$model->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['rows'=>$rows,'pager'=>$pager]);
     }
+
+    /**
+     * @return string|\yii\web\Response
+     */
     public function actionAdd(){
         $model=new Article();
         $sonModel=new ArticleDetail();
         $request=\Yii::$app->request;
-        $category=ArticleCategory::find()->where(['status'=>[0,1]])->all();
+        $category=ArticleCategory::find()->where(['status'=>[0,1]])->select(['id','name'])->asArray()->all();
+        array_unshift($category,['id'=>'','name'=>'请选择']);
         if ($request->isPost){
             $model->load($request->post());
             $sonModel->load($request->post());
@@ -31,13 +39,12 @@ class ArticleController extends Controller{
                 //处理文章文章详情
                    $sonModel->save();
                    //处理文章
-                   $model->create_time=strtotime($model->date_time);
                    $model->save();
 
                    \Yii::$app->session->setFlash('success','新增文章成功');
                     return $this->redirect(Url::to(['article/index']));
             }else{
-                var_dump($model->getErrors());die;
+                var_dump($model->getErrors());
             }
         }
         $model->status=0;
@@ -47,7 +54,8 @@ class ArticleController extends Controller{
         $model=Article::findOne($id);
         $sonModel=ArticleDetail::findOne($id);
         $request=\Yii::$app->request;
-        $category=ArticleCategory::find()->where(['status'=>[0,1]])->all();
+        $category=ArticleCategory::find()->where(['status'=>[0,1]])->select(['id','name'])->asArray()->all();
+        array_unshift($category,['id'=>'','name'=>'请选择']);
         if ($request->isPost){
             $model->load($request->post());
             $sonModel->load($request->post());
@@ -55,11 +63,9 @@ class ArticleController extends Controller{
                 //处理文章文章详情
                 $sonModel->save();
                 //处理文章
-
-                $model->create_time=strtotime($model->date_time);
                 $model->save();
 
-                \Yii::$app->session->setFlash('success','新增文章成功');
+                \Yii::$app->session->setFlash('success','修改文章成功');
                 return $this->redirect(Url::to(['article/index']));
             }else{
                 var_dump($model->getErrors());die;
