@@ -51,7 +51,7 @@ class GoodsController extends Controller
         $query=$query->andWhere($search);
         $pager = new Pagination([
             'totalCount' => $query->count(),
-            'pageSize' => 2,
+            'pageSize' => 7,
         ]);
 
         $rows = $query->limit($pager->limit)->offset($pager->offset)->all();
@@ -62,7 +62,7 @@ class GoodsController extends Controller
     {
         $model = new Goods();
         $introModel = new GoodsIntro();
-        $brands = Brand::find()->select(['id', 'name'])->all();
+        $brands = Brand::find()->select(['id', 'name'])->where(['status'=>[1]])->all();
         array_unshift($brands,['id'=>'','name'=>'【请选择】']);
         $request = \Yii::$app->request;
         if ($request->isPost) {

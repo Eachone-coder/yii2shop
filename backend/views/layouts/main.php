@@ -61,7 +61,8 @@ AppAsset::register($this);
             'label'=>'管理员',
             'items'=>[
                 ['label' => '管理员列表', 'url' => ['/user/index']],
-                ['label' => '权限管理', 'url' => ['/brand/add']],
+                ['label' => '权限管理', 'url' => ['/rbac/index']],
+                ['label' => '角色管理', 'url' => ['/rbac/index-role']],
             ]
         ],
         [

@@ -39,29 +39,6 @@ class LoginController extends Controller{
         return $this->redirect(['login/index']);
     }
 
-    public function actionAuto(){
-        $model=new LoginForm();
-        //判断session,在判断cookie
-        if (\Yii::$app->user->isGuest){
-            //session中无用户信息
-          $readCookie=\Yii::$app->request->cookies;
-          if ($readCookie->has('name') && $readCookie->has('password')){
-              //如果有,调用LoginForm的check方法
-              if ($model->check()){
-                  \Yii::$app->session->setFlash('success','登录成功');
-                  return $this->redirect(['goods/index']);
-                  //验证成功
-              }
-              else{
-                  return $this->redirect(Url::to(['login/index']));
-              }
-          }else{
-              return $this->redirect(Url::to(['login/index']));
-          }
-        }else{
-            return $this->redirect(['goods/index']);
-        }
-    }
     /**
      * @return array
      */

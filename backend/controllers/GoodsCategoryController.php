@@ -27,6 +27,7 @@ class GoodsCategoryController extends \yii\web\Controller {
                 return $this->redirect(Url::to(['goods-category/index']));
             }
         }
+        $model->parent_id=0;
         return $this->render('alter',['model'=>$model]);
     }
 
@@ -57,7 +58,7 @@ class GoodsCategoryController extends \yii\web\Controller {
     public function actionDelete($id){
         $row=GoodsCategory::findOne(['id'=>$id]);
         if ($row){
-            if ($row->lft=$row->rgt-1){
+            if ($row->lft==$row->rgt-1){
                 $row->delete();
                 echo Json::encode(['status'=>$id]);
             }

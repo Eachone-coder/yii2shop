@@ -2,6 +2,8 @@
 namespace backend\models;
 
 use yii\base\Model;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\web\Cookie;
 
 class LoginForm extends Model
@@ -49,22 +51,12 @@ class LoginForm extends Model
                 $user->last_login_time=time();
                 $user->last_login_ip = ($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : $_SERVER["SERVER_ADDR"];
                 $user->save();
-                //>>.2存入session
-                \Yii::$app->user->login($user);
+                $time=0;
                 if ($this->remeberMe){
-                    //>>.3存入cookie  存入id和密码
-                    //写cookie
-                    $responseCookie=\Yii::$app->response->cookies;
-                    $writeCookie=new Cookie();
-                    $writeCookie->name='name';
-                    $writeCookie->value=$user->username;
-                    $writeCookie->expire=time()+60*2;
-                    $responseCookie->add($writeCookie);
-                    $writeCookie->name='password';
-                    $writeCookie->value=$user->auth_key;
-                    $writeCookie->expire=time()+60*2;
-                    $responseCookie->add($writeCookie);
+                    $time=60;
                 }
+                //>>.2存入session
+                \Yii::$app->user->login($user,$time);
                 return true;
             } else {
                 $this->addError('password', '密码不正确');
@@ -75,7 +67,7 @@ class LoginForm extends Model
             return false;
         }
     }
-    /*public function behaviors()
+    public function behaviors()
     {
         return [
             [
@@ -85,5 +77,5 @@ class LoginForm extends Model
                 ],
             ],
         ];
-    }*/
+    }
 }

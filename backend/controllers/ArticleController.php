@@ -4,6 +4,7 @@ namespace backend\controllers;
 use backend\models\Article;
 use backend\models\ArticleCategory;
 use backend\models\ArticleDetail;
+use backend\models\ArticleSearchForm;
 use yii\data\Pagination;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -13,14 +14,23 @@ class ArticleController extends Controller{
      * @return string
      */
     public function actionIndex(){
-        $model=Article::find()->where(['status'=>[0,1]]);
-
+        $query=Article::find()->where(['status'=>[0,1]]);
+        $search=new ArticleSearchForm();
+        $search->load(\Yii::$app->request->get());
+        if (count($search)){
+            if ($search->name){
+                $query->andWhere(['like','name',$search->name]);
+            }
+            if ($search->intro){
+                $query->andWhere(['like','intro',$search->intro]);
+            }
+        }
         $pager=new Pagination([
-            'pageSize' => 5,
-            'totalCount' => $model->count(),
+            'pageSize' => 7,
+            'totalCount' => $query->count(),
         ]);
-        $rows=$model->limit($pager->limit)->offset($pager->offset)->all();
-        return $this->render('index',['rows'=>$rows,'pager'=>$pager]);
+        $rows=$query->limit($pager->limit)->offset($pager->offset)->all();
+        return $this->render('index',['rows'=>$rows,'pager'=>$pager,'searchForm'=>$search]);
     }
 
     /**
@@ -50,6 +60,11 @@ class ArticleController extends Controller{
         $model->status=0;
         return $this->render('alter',['model'=>$model,'sonModel'=>$sonModel,'category'=>$category]);
     }
+
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     */
     public function actionUpdate($id){
         $model=Article::findOne($id);
         $sonModel=ArticleDetail::findOne($id);
@@ -73,6 +88,10 @@ class ArticleController extends Controller{
         }
         return $this->render('alter',['model'=>$model,'sonModel'=>$sonModel,'category'=>$category]);
     }
+
+    /**
+     * @param $id
+     */
     public function actionDelete($id){
         $row=Article::findOne(['id'=>$id]);
         if ($row){
@@ -84,6 +103,11 @@ class ArticleController extends Controller{
             echo json_encode(['status'=>$row->getErrors()]);
         }
     }
+
+    /**
+     * @param $id
+     * @return string
+     */
     public function actionShow($id){
         $model=Article::findOne($id);
         $sonModel=ArticleDetail::findOne($id);
@@ -91,6 +115,9 @@ class ArticleController extends Controller{
         return $this->render('show',['model'=>$model,'sonModel'=>$sonModel,'category'=>$category]);
     }
 
+    /**
+     * @return array
+     */
     public function actions()
     {
         return [

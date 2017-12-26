@@ -33,7 +33,7 @@ return [
             //指定实现认证接口的类 一般就是账号对应的类
             //common
             'identityClass' => 'backend\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => true,      //启用自动登录
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
             //设置默认的登录地址
            'loginUrl' => ['login/index'],

@@ -15,7 +15,7 @@ class ArticleCategoryController extends \yii\web\Controller
         //分页
         $pager=new Pagination([
             'totalCount' => $model->count(),
-            'pageSize' => 5,
+            'pageSize' => 7,
         ]);
         $rows=$model->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['rows'=>$rows,'pager'=>$pager]);

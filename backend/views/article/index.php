@@ -1,8 +1,24 @@
 <style>
-    tr td,th{
+    tr th,td{
         text-align: center;
     }
+    #head{
+        text-align: center;
+        font-size: 30px;
+    }
+    .btn-warning{
+        position: relative;
+        top: -6px;
+    }
 </style>
+<h1 id="head">文章列表</h1>
+<?php
+$form=\yii\bootstrap\ActiveForm::begin(['method' => 'get','action' => \yii\helpers\Url::to(['article/index']),'options' => ['class'=>'form-inline','role'=>'form'],]);
+    echo $form->field($searchForm,'name')->textInput(['placeholder'=>'名称']);
+    echo $form->field($searchForm,'intro')->textInput(['placeholder'=>'简介']);
+    echo \yii\bootstrap\Html::submitButton('<span class="glyphicon glyphicon-search"></span>搜索',['class'=>'btn btn-warning']);
+\yii\bootstrap\ActiveForm::end();
+?>
 <table class="table table-bordered">
     <tr>
         <th>名称</th>

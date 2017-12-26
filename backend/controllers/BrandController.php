@@ -26,7 +26,7 @@ class BrandController extends \yii\web\Controller
         //分页
         $pager=new Pagination([
             'totalCount' => $model->count(),
-            'pageSize' => 5,
+            'pageSize' => 7,
         ]);
 
         $rows=$model->addOrderBy('sort')->limit($pager->limit)->offset($pager->offset)->all();

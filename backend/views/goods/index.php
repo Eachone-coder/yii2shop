@@ -2,6 +2,10 @@
     tr td,th{
         text-align: center;
     }
+    .btn-warning{
+        position: relative;
+        top: -6px;
+    }
 </style>
 <h1>商品列表</h1>
 <?php
@@ -10,7 +14,7 @@ $form=\yii\bootstrap\ActiveForm::begin(['method' => 'get','action' => \yii\helpe
     echo $form->field($goods,'sn')->textInput(['type'=>'tel','placeholder'=>'商品货号'])->label('');
     echo $form->field($goods,'minPrice')->textInput(['type'=>'tel','placeholder'=>'最小价格'])->label('');
     echo $form->field($goods,'maxPrice')->textInput(['type'=>'tel','placeholder'=>'最大价格'])->label('');
-    echo \yii\bootstrap\Html::submitButton('<span class="glyphicon glyphicon-search"></span>搜索',['class'=>'btn btn-info']);
+    echo \yii\bootstrap\Html::submitButton('搜索<span class="glyphicon glyphicon-search"></span>',['class'=>'btn btn-warning']);
 \yii\bootstrap\ActiveForm::end();
 ?>
 
