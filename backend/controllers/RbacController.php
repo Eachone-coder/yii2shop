@@ -1,11 +1,12 @@
 <?php
 namespace backend\controllers;
 
-use backend\models\Permission;
-use backend\models\Role;
+use backend\models\PermissionForm;
+use backend\models\RoleForm;
 use yii\data\Pagination;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\rbac\Role;
 use yii\web\Controller;
 
 class RbacController extends Controller{
@@ -16,15 +17,17 @@ class RbacController extends Controller{
         return $this->render('index-permission',['rows'=>$permission]);
     }
     public function actionAddPermission(){
-        $model=new Permission();
+        $model=new PermissionForm();
         $request=\Yii::$app->request;
+        //创建一个权限对象
+        $authManager= \Yii::$app->authManager;
+        //判断数据
+        $permission=new \yii\rbac\Permission();
+        $model->scenario=PermissionForm::SCENARIO_ADD_PERMISSION;
         if ($request->isPost){
             $model->load($request->post());
             if ($model->validate()){
-                //创建一个权限对象
-                $authManager= \Yii::$app->authManager;
-                //判断数据
-                $permission=new \yii\rbac\Permission();
+
                 $permission->name=$model->name;
                 $permission->description=$model->description;
                 //保存
@@ -40,10 +43,11 @@ class RbacController extends Controller{
     }
 
     public function actionEditPermission($name){
-        $model=new Permission();
+        $model=new PermissionForm();
         //创建一个权限对象
         $authManager= \Yii::$app->authManager;
         $request=\Yii::$app->request;
+        $model->scenario=PermissionForm::SCENARIO_EDIT_PERMISSION;
         $permission=$authManager->getPermission($name);
         if ($request->isPost){
             $model->load($request->post());
@@ -80,7 +84,8 @@ class RbacController extends Controller{
 
     public function actionAddRole()
     {
-        $model=new Role();
+        $model=new RoleForm();
+        $model->scenario=RoleForm::SCENARIO_ADD_ROLE;
         $authManager=\Yii::$app->authManager;
         $list=$authManager->getPermissions();
         $request=\Yii::$app->request;
@@ -110,11 +115,13 @@ class RbacController extends Controller{
 
     public function actionEditRole($name)
     {
-        $model=new Role();
+        $model=new RoleForm();
+        $model->scenario=RoleForm::SCENARIO_EDIT_ROLE;
         $authManager=\Yii::$app->authManager;
         $list=$authManager->getPermissions();
         $request=\Yii::$app->request;
         $role=$authManager->getRole($name);
+
         if ($request->isPost){
             $model->load($request->post());
             if ($model->validate()){

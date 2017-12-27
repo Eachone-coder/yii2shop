@@ -7,8 +7,8 @@
         font-size: 30px;
     }
 </style>
+<h1 id="head">商品品牌列表</h1>
 <table class="table table-bordered">
-    <caption id="head">商品品牌列表</caption>
     <tr>
         <th>名称</th>
         <th>简介</th>

@@ -16,7 +16,7 @@
             <td><?php echo $row->name?></td>
             <td><?php echo $row->intro?></td>
             <td><?php echo $row->sort?></td>
-            <td><?php echo $row->status?'隐藏':'正常'?></td>
+            <td><?php echo $row->status?'正常':'隐藏'?></td>
             <td>
                 <?php echo \yii\bootstrap\Html::a('修改',\yii\helpers\Url::to(['article-category/update','id'=>$row->id]),['class'=>'btn btn-primary btn-sm'])?>
                 <?php echo \yii\bootstrap\Html::submitButton('删除',['class'=>'btn btn-danger btn-sm','id'=>$row->id])?>

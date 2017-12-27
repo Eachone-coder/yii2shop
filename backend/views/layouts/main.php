@@ -72,6 +72,14 @@ AppAsset::register($this);
                 ['label' => '品牌回收站', 'url' => ['/trash/index']],
             ]
         ],
+        [
+            'label'=>'个人中心',
+            'items'=>[
+                ['label' => '个人信息', 'url' =>['/admin/index']],
+
+                ['label' => '修改信息', 'url' => ['/admin/edit']],
+            ]
+        ],
         ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '登录', 'url' => ['/login/index']];
@@ -79,7 +87,7 @@ AppAsset::register($this);
         $menuItems[] = '<li>'
             . Html::beginForm(['/login/logout'], 'post')
             . Html::submitButton(
-                '退出 (' . Yii::$app->user->identity->username . ')',
+                '退出',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
