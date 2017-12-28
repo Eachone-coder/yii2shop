@@ -3,7 +3,7 @@
         text-align: center;
     }
 </style>
-<table class="table table-bordered">
+<table class="table">
     <tr>
         <th>名称</th>
         <th>地址/路由</th>

@@ -14,20 +14,29 @@ class MenuController extends Controller{
             'pageSize' => 7,
             'totalCount' => $query->count(),
         ]);
+        $rows=[];
+        $arrays=$query->all();
+        foreach ($arrays as $val){
+            if ($val->parent_id==0){
+                $parents[]=$val;
+            }
+        }
 
-        $rows=$query->all();
+        foreach ($parents as $parent){
+            $rows[]=$parent;
+            foreach ($arrays as $value){
+                if ($value->parent_id==$parent->id){
+                    $rows[]=$value;
+                }
+            }
+        }
+
         return $this->render('index',['rows'=>$rows]);
     }
     public function actionAdd(){
         $model=new Menu();
         $request=\Yii::$app->request;
-        $menus=[
-            ['parent_id'=>'','name'=>'请选择上级菜单'],
-            ['parent_id'=>'1','name'=>'商品管理'],
-            ['parent_id'=>'2','name'=>'品牌管理'],
-            ['parent_id'=>'3','name'=>'管理员管理'],
-            ['parent_id'=>'4','name'=>'用户管理'],
-        ];
+        $menus=Menu::find()->where(['parent_id'=>0])->asArray()->all();
         $urls=[
             ['val'=>'','name'=>'请选择路由'],
             ['val'=>'goods/add','name'=>'goods/add'],
@@ -39,6 +48,9 @@ class MenuController extends Controller{
             ['val'=>'article/add','name'=>'article/add'],
             ['val'=>'article/update','name'=>'article/update'],
             ['val'=>'article/delete','name'=>'article/delete'],
+            ['val'=>'user/add','name'=>'user/add'],
+            ['val'=>'user/update','name'=>'user/update'],
+            ['val'=>'user/delete','name'=>'user/delete'],
         ];
         if ($request->isPost){
             $model->load($request->post());
@@ -54,13 +66,7 @@ class MenuController extends Controller{
     public function actionEdit($id){
         $model=Menu::findOne(['id'=>$id]);
         $request=\Yii::$app->request;
-        $menus=[
-            ['parent_id'=>'','name'=>'请选择上级菜单'],
-            ['parent_id'=>'1','name'=>'商品管理'],
-            ['parent_id'=>'2','name'=>'品牌管理'],
-            ['parent_id'=>'3','name'=>'管理员管理'],
-            ['parent_id'=>'4','name'=>'用户管理'],
-        ];
+        $menus=Menu::find()->where(['parent_id'=>0])->asArray()->all();
         $urls=[
             ['val'=>'','name'=>'请选择路由'],
             ['val'=>'goods/add','name'=>'goods/add'],
@@ -72,6 +78,10 @@ class MenuController extends Controller{
             ['val'=>'article/add','name'=>'article/add'],
             ['val'=>'article/update','name'=>'article/update'],
             ['val'=>'article/delete','name'=>'article/delete'],
+            ['val'=>'article/delete','name'=>'article/delete'],
+            ['val'=>'user/add','name'=>'user/add'],
+            ['val'=>'user/update','name'=>'user/update'],
+            ['val'=>'user/delete','name'=>'user/delete'],
         ];
         if ($request->isPost){
             $model->load($request->post());
@@ -92,5 +102,11 @@ class MenuController extends Controller{
         }else{
             echo Json::encode(['status'=>0]);
         }
+    }
+
+    public function category($arrays,$pid=0,$level=0){
+        static $list=[];
+
+        return $list;
     }
 }

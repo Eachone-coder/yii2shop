@@ -95,6 +95,28 @@ class BrandController extends \yii\web\Controller
         }
     }
 
+    public function actionDel($id){
+        $row=Brand::findOne(['id'=>$id]);
+        if ($row){
+            $row->delete();
+            echo json_encode(['status'=>$id]);
+        }
+        else{
+            echo json_encode(['status'=>$row->getErrors()]);
+        }
+    }
+
+    public function actionEdit($id){
+        $row=Brand::findOne(['id'=>$id]);
+        if ($row){
+            $row->status=0;
+            $row->save();
+            echo json_encode(['status'=>$id]);
+        }
+        else{
+            echo json_encode(['status'=>$row->getErrors()]);
+        }
+    }
     /**
      * @throws \Exception
      */

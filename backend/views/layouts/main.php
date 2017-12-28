@@ -68,8 +68,8 @@ AppAsset::register($this);
         [
             'label'=>'回收站',
             'items'=>[
-                ['label' => '文章回收站', 'url' => ['/trash/index']],
-                ['label' => '品牌回收站', 'url' => ['/trash/index']],
+                ['label' => '文章回收站', 'url' => ['/trash/article']],
+                ['label' => '品牌回收站', 'url' => ['/trash/brand']],
             ]
         ],
         [

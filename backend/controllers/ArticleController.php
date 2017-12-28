@@ -106,6 +106,32 @@ class ArticleController extends Controller{
 
     /**
      * @param $id
+     */
+    public function actionDel($id){
+        $row=Article::findOne(['id'=>$id]);
+        if ($row){
+            $row->delete();
+            echo json_encode(['status'=>$id]);
+        }
+        else{
+            echo json_encode(['status'=>$row->getErrors()]);
+        }
+    }
+
+    public function actionEdit($id){
+        $row=Article::findOne(['id'=>$id]);
+        if ($row){
+            $row->status=0;
+            $row->save();
+            echo json_encode(['status'=>$id]);
+        }
+        else{
+            echo json_encode(['status'=>$row->getErrors()]);
+        }
+    }
+
+    /**
+     * @param $id
      * @return string
      */
     public function actionShow($id){

@@ -37,9 +37,11 @@ class UserController extends \yii\web\Controller
                 $model->password_hash=\Yii::$app->security->generatePasswordHash($model->password_hash);
                 $model->save();
                 //存入角色和管理员的关系
-                foreach ($model->roles as $name){
-                    $role=$authManager->getRole($name);
-                    $authManager->assign($role,$model->getId());
+                if ($model->roles){
+                    foreach ($model->roles as $name){
+                        $role=$authManager->getRole($name);
+                        $authManager->assign($role,$model->getId());
+                    }
                 }
                 \Yii::$app->session->setFlash('success','新增用户名成功');
                 return $this->redirect(Url::to(['user/index']));
@@ -81,10 +83,12 @@ class UserController extends \yii\web\Controller
                         $model->save();
                         //存入角色和管理员的关系
                         $authManager->revokeAll($id);
-                        foreach ($model->roles as $name){
-                            $role=$authManager->getRole($name);
-                            var_dump($role);die;
-                            $authManager->assign($role,$id);
+                        if ($model->roles){
+                            foreach ($model->roles as $name){
+                                $role=$authManager->getRole($name);
+                                var_dump($role);die;
+                                $authManager->assign($role,$id);
+                            }
                         }
                         \Yii::$app->session->setFlash('success','修改用户名成功');
                         return $this->redirect(Url::to(['user/index']));
@@ -93,9 +97,12 @@ class UserController extends \yii\web\Controller
                 $model->save();
                 //存入角色和管理员的关系
                 $authManager->revokeAll($id);
-                foreach ($model->roles as $name){
-                    $role=$authManager->getRole($name);
-                    $authManager->assign($role,$id);
+                if ($model->roles){
+                    foreach ($model->roles as $name){
+                        $role=$authManager->getRole($name);
+                        var_dump($role);die;
+                        $authManager->assign($role,$id);
+                    }
                 }
                 \Yii::$app->session->setFlash('success','修改用户名成功');
                 return $this->redirect(Url::to(['user/index']));
