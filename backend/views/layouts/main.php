@@ -80,6 +80,14 @@ AppAsset::register($this);
                 ['label' => '修改信息', 'url' => ['/admin/edit']],
             ]
         ],
+        [
+            'label'=>'菜单管理',
+            'items'=>[
+                ['label' => '菜单列表', 'url' =>['/menu/index']],
+
+                ['label' => '添加菜单', 'url' => ['/menu/add']],
+            ]
+        ],
         ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '登录', 'url' => ['/login/index']];

@@ -10,9 +10,10 @@ class UserForm extends User{
     public function rules()
     {
         return [
-            [['oldPassword','newPassword','rePassword'],'safe'],
+            [['oldPassword','newPassword','rePassword','status'],'safe'],
             [['username','email'],'required'],
             [['oldPassword','newPassword','rePassword'],'checkPwd'],
+            ['roles','safe'],
         ];
     }
 

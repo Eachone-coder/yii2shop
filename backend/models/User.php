@@ -24,9 +24,7 @@ use yii\db\ActiveRecord;
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
     public $password;       //确认密码
-    public $oldPassword;    //旧密码
-    public $rePassword;    //新密码
-    public $newPassword;
+    public $roles;
     /**
      * @inheritdoc
      */
@@ -41,15 +39,15 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password_hash','password', 'email',], 'required'],
+            [['username', 'password_hash','password', 'email','status'], 'required'],
             [['status','created_at', 'updated_at', 'last_login_time'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'email', 'last_login_ip'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
-            [['oldPassword','newPassword','rePassword'],'safe'],
-            //['email','match','pattern' => '/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/'],
+            [['oldPassword','newPassword','rePassword','roles'],'safe'],
+            ['email','match','pattern' => '/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/'],
         ];
     }
 
@@ -70,43 +68,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'rePassword'=>'确认密码',
             'oldPassword' => '旧密码',
             'newPassword' => '新密码',
+            'roles'=>'角色'
         ];
     }
 
-    public function checkPwd()
-    {
-        /*
-        >>1.先根据id查找到具体的用户信息
-        >>2.先判断旧密码是否正确      -->不正确,提示错误
-        >>3.旧密码正确,判断新密码和确认密码是否为空        -->不正确,提示错误
-        >>4.新密码和确认密码不为空,并且判断是否相等        -->不正确,提示错误
-        >>5.相等,返回true,保存新密码
-        */
-        $user=User::findOne(['id'=>$this->id]);
-        if ($this->newPassword!=null && $this->rePassword!=null){
-            if ($this->newPassword==$this->rePassword){
-                //判断旧密码是否正确
-                if (\Yii::$app->security->validatePassword($this->oldPassword,$user->getOldAttribute('password_hash'))){
-                    //验证成功
-                    return true;
-                }
-                else{
-                    $this->addError('oldPassword','旧密码不正确');
-                    return false;
-                }
-            }
-            else{
-                $this->addError('rePassword','两次输入密码不一致');
-                return false;
-            }
-        }else if ($this->newPassword==null){
-            $this->addError('newPassword','请输入新密码');
-            return false;
-        }else if($this->rePassword==null){
-            $this->addError('rePassword','请输入确认密码');
-            return false;
-        }
-    }
+
     /**
      * @return array
      */
