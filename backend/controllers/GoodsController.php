@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\Brand;
 use backend\models\Goods;
 use backend\models\GoodsDayCount;
@@ -215,6 +216,15 @@ class GoodsController extends Controller
                     'imagePathFormat' => "/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
                 ]
             ]
+        ];
+    }
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
         ];
     }
 }

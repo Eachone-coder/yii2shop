@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\PermissionForm;
 use backend\models\RoleForm;
 use yii\data\Pagination;
@@ -158,5 +159,14 @@ class RbacController extends Controller{
         $role=$authManager->getRole($name);
         $authManager->remove($role);
         echo Json::encode(['status'=>1]);
+    }
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
+        ];
     }
 }

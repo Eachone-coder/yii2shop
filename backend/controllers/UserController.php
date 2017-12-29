@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\User;
 use backend\models\UserForm;
 use yii\data\Pagination;
@@ -86,7 +87,6 @@ class UserController extends \yii\web\Controller
                         if ($model->roles){
                             foreach ($model->roles as $name){
                                 $role=$authManager->getRole($name);
-                                var_dump($role);die;
                                 $authManager->assign($role,$id);
                             }
                         }
@@ -100,7 +100,6 @@ class UserController extends \yii\web\Controller
                 if ($model->roles){
                     foreach ($model->roles as $name){
                         $role=$authManager->getRole($name);
-                        var_dump($role);die;
                         $authManager->assign($role,$id);
                     }
                 }
@@ -131,4 +130,13 @@ class UserController extends \yii\web\Controller
         }
     }
 
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
+        ];
+    }
 }

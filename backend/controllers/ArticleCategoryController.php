@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\ArticleCategory;
 use yii\data\Pagination;
 use yii\helpers\Url;
+use backend\filter\RbacFilter;
 
 class ArticleCategoryController extends \yii\web\Controller
 {
@@ -62,5 +63,13 @@ class ArticleCategoryController extends \yii\web\Controller
             echo json_encode(['status'=>$row->getErrors()]);
         }
     }
-
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
+        ];
+    }
 }

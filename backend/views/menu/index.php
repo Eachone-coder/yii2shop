@@ -12,7 +12,7 @@
     </tr>
     <?php foreach ($rows as $row):?>
         <tr data-id="<?php echo $row->id?>" id="menu<?php echo $row->id?>">
-            <td><?php echo $row->name?></td>
+            <td><?php echo $row->label?></td>
             <td><?php echo $row->url?></td>
             <td><?php echo $row->sort?></td>
             <td>
@@ -26,6 +26,9 @@
     </tr>
 </table>
 <?php
+\yii\widgets\LinkPager::widget([
+        'pagination' => $pager,
+]);
 /**
  * @var $this \yii\web\View
  */

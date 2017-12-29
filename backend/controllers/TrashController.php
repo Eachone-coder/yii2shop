@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\Article;
 use backend\models\Brand;
 use yii\data\Pagination;
@@ -27,5 +28,14 @@ class TrashController extends Controller{
         ]);
         $rows=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('brand',['rows'=>$rows,'pager'=>$pager]);
+    }
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
+        ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\Brand;
 use yii\data\Pagination;
 use yii\helpers\Json;
@@ -166,5 +167,15 @@ class BrandController extends \yii\web\Controller
                 echo Json::encode(['status'=>0]);
             }
         }
+    }
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
+        ];
     }
 }

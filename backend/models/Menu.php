@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "menu".
  *
  * @property integer $id
- * @property string $name
+ * @property string $label
  * @property integer $parent_id
  * @property string $url
  * @property integer $sort
@@ -29,9 +29,9 @@ class Menu extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'parent_id', 'url', 'sort'], 'required'],
+            [['label', 'parent_id', 'sort'], 'required'],
             [['parent_id', 'sort'], 'integer'],
-            [['name', 'url'], 'string', 'max' => 50],
+            [['label', 'url'], 'string', 'max' => 50],
         ];
     }
 
@@ -42,10 +42,14 @@ class Menu extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => '名称',
+            'label' => '名称',
             'parent_id' => '上级菜单',
             'url' => '地址/路由',
             'sort' => '排序',
         ];
+    }
+
+    public function getChild(){
+        return $this->hasMany(self::className(),['parent_id'=>'id']);
     }
 }

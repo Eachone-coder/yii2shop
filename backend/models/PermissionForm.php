@@ -17,7 +17,7 @@ class PermissionForm extends Model{
             [['name','description'],'required'],
             ['name','checkName','on'=>[self::SCENARIO_ADD_PERMISSION]],
             ['name','validName','on'=>[self::SCENARIO_EDIT_PERMISSION]],
-            ['name','match','pattern' => '/^\w+\/\w+$/','message' => '权限名填写出错,请填写正确格式,如  user/add']
+            ['name','match','pattern' => '/^\w+-?\w+\/\w+-?\w+$/','message' => '权限名填写出错,请填写正确格式,如  user/add']
         ];
     }
 

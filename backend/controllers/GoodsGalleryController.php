@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\GoodsGallery;
 use yii\web\Controller;
 use yii\web\UploadedFile;
@@ -82,5 +83,14 @@ class GoodsGalleryController extends Controller{
                 echo Json::encode(['status'=>0]);
             }
         }
+    }
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
+        ];
     }
 }

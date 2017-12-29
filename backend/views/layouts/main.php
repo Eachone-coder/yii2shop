@@ -34,64 +34,11 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems=[
-        [
-            'label'=>'品牌',
-            'items'=>[
-                ['label' => '品牌列表', 'url' =>['/brand/index']],
-
-                ['label' => '添加品牌', 'url' => ['/brand/add']],
-            ]
-        ],
-        [
-                'label'=>'文章',
-                'items'=>[
-                    ['label' => '文章', 'url' => ['/article/index']],
-                    ['label' => '文章分类', 'url' => ['/article-category/index']],
-                ],
-        ],
-        [
-            'label'=>'商品',
-            'items'=>[
-                ['label' => '商品列表', 'url' =>['/goods/index']],
-                ['label' => '商品分类', 'url' => ['/goods-category/index']],
-            ]
-        ],
-        [
-            'label'=>'管理员',
-            'items'=>[
-                ['label' => '管理员列表', 'url' => ['/user/index']],
-                ['label' => '权限管理', 'url' => ['/rbac/index']],
-                ['label' => '角色管理', 'url' => ['/rbac/index-role']],
-            ]
-        ],
-        [
-            'label'=>'回收站',
-            'items'=>[
-                ['label' => '文章回收站', 'url' => ['/trash/article']],
-                ['label' => '品牌回收站', 'url' => ['/trash/brand']],
-            ]
-        ],
-        [
-            'label'=>'个人中心',
-            'items'=>[
-                ['label' => '个人信息', 'url' =>['/admin/index']],
-
-                ['label' => '修改信息', 'url' => ['/admin/edit']],
-            ]
-        ],
-        [
-            'label'=>'菜单管理',
-            'items'=>[
-                ['label' => '菜单列表', 'url' =>['/menu/index']],
-
-                ['label' => '添加菜单', 'url' => ['/menu/add']],
-            ]
-        ],
-        ];
+    $menuItems=[];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '登录', 'url' => ['/login/index']];
     } else {
+        $menuItems=Yii::$app->user->identity->menu;
         $menuItems[] = '<li>'
             . Html::beginForm(['/login/logout'], 'post')
             . Html::submitButton(

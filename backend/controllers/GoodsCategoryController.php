@@ -1,7 +1,9 @@
 <?php
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\GoodsCategory;
+use Qiniu\Http\Request;
 use yii\helpers\Json;
 use yii\helpers\Url;
 
@@ -71,4 +73,13 @@ class GoodsCategoryController extends \yii\web\Controller {
         }
     }
 
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
+            ],
+        ];
+    }
 }

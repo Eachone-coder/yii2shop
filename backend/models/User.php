@@ -177,4 +177,23 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         }
         return false;
     }
+
+    public function getMenu()
+    {
+        $menuItems=[];
+            $parents=Menu::find()->where(['parent_id'=>0])->all();
+            foreach ($parents as $parent){
+                $items=[];
+                $rows=Menu::find()->where(['parent_id'=>$parent->id])->all();
+                foreach ($rows as $row){
+                    if (Yii::$app->user->can($row->url)){
+                        $items[]=['label' => $row->label, 'url' =>[$row->url]];
+                    }
+                }
+                if ($items){
+                    $menuItems[]=['label'=>$parent->label,'items'=>$items];
+                }
+            }
+        return $menuItems;
+    }
 }

@@ -1,11 +1,10 @@
 <?php
 namespace backend\controllers;
 
+use backend\filter\RbacFilter;
 use backend\models\LoginForm;
 use yii\captcha\CaptchaAction;
-use yii\helpers\Url;
 use yii\web\Controller;
-use yii\web\Cookie;
 
 class LoginController extends Controller{
     /**
@@ -54,24 +53,13 @@ class LoginController extends Controller{
             ],
         ];
     }
-    /*public function behaviors()
+    public function behaviors()
     {
         return [
-            'access'=>[
-                'class'=>AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow'=>true,
-                        'actions'=>['index','captcha'],
-                        'roles'=>['?','@']       //  ?代表未认证的用户,  @标识已认证的用户
-                    ],
-                    [
-                        'allow'=>true,
-                        'actions'=>['log-out'],
-                        'roles'=>['@']       //  ?代表未认证的用户,  @标识已认证的用户
-                    ],
-                ],
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except' => ['index','logout','upload','captcha','ueditor'],
             ],
         ];
-    }*/
+    }
 }

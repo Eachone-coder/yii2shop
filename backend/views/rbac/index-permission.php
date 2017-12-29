@@ -38,7 +38,7 @@ $html=\yii\helpers\Url::to(['rbac/del-permission']).'?name=';
 $js=<<<JS
     <!--第三步：初始化Datatables-->
         $('#table_id_example').DataTable({
-        scrollY: 400,
+        
         language: {
             decimal: ",",
             search: "在表格中搜索:",
