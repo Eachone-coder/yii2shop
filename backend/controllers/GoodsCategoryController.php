@@ -3,7 +3,6 @@ namespace backend\controllers;
 
 use backend\filter\RbacFilter;
 use backend\models\GoodsCategory;
-use Qiniu\Http\Request;
 use yii\helpers\Json;
 use yii\helpers\Url;
 

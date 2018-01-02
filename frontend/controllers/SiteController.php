@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use backend\models\GoodsCategory;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -72,7 +73,14 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $query=GoodsCategory::find();
+        //家用电器
+        $one=$query->where(['depth'=>0])->all();
+        //冰箱
+        $two=$query->where(['depth'=>1])->all();
+        //多门冰箱
+        $three=$query->where(['depth'=>2])->all();
+        return $this->render('index',['one'=>$one,'two'=>$two,'three'=>$three]);
     }
 
     /**

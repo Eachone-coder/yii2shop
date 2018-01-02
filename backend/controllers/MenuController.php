@@ -73,22 +73,8 @@ class MenuController extends Controller{
         $menus=Menu::find()->where(['parent_id'=>0])->asArray()->all();
         array_unshift($menus,['id'=>'0','name'=>'顶级菜单']);
         array_unshift($menus,['id'=>'','name'=>'请选择菜单']);
-        $urls=[
-            ['val'=>'','name'=>'请选择路由'],
-            ['val'=>'goods/add','name'=>'goods/add'],
-            ['val'=>'goods/update','name'=>'goods/update'],
-            ['val'=>'goods/delete','name'=>'goods/delete'],
-            ['val'=>'brand/add','name'=>'brand/add'],
-            ['val'=>'brand/update','name'=>'brand/update'],
-            ['val'=>'brand/delete','name'=>'brand/delete'],
-            ['val'=>'article/add','name'=>'article/add'],
-            ['val'=>'article/update','name'=>'article/update'],
-            ['val'=>'article/delete','name'=>'article/delete'],
-            ['val'=>'article/delete','name'=>'article/delete'],
-            ['val'=>'user/add','name'=>'user/add'],
-            ['val'=>'user/update','name'=>'user/update'],
-            ['val'=>'user/delete','name'=>'user/delete'],
-        ];
+        $authManager=\Yii::$app->authManager;
+        $urls=$authManager->getPermissions();
         if ($request->isPost){
             $model->load($request->post());
             if ($model->validate()){

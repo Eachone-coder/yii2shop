@@ -17,7 +17,7 @@ return [
     //默认路由
     //'defaultRoute' => 'book',
 
-
+    'layout'=>false,
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
@@ -28,7 +28,7 @@ return [
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
             //设置默认的登录地址
-            //'loginUrl' => ['login/index'],
+            'loginUrl' => ['login/index'],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
@@ -51,7 +51,7 @@ return [
             'class'=>'yii\web\urlManager',  //指定实现类
             'enablePrettyUrl' => true,      //开启URL美化
             'showScriptName' => false,      //是否显示index.php
-            'suffix'=>'html',
+            'suffix'=>'.html',
             'rules' => [
                 //配置规则
                 //'add'=>'goods/add',
