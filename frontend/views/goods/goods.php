@@ -556,8 +556,8 @@
             <!-- 图片预览区域 start -->
             <div class="preview fl">
                 <div class="midpic">
-                    <a href="<?php echo $goodsGallery[0]->path?>" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
-                        <img src="<?php echo $goodsGallery[0]->path?>" alt="" />               <!-- 第一幅图片的中图 -->
+                    <a href="<?php echo $first->path?>" class="jqzoom" rel="gal1" >   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
+                        <img src="<?php echo $first->path?>" alt=""/>               <!-- 第一幅图片的中图 -->
                     </a>
                 </div>
 
@@ -568,13 +568,14 @@
                     <a href="javascript:;" id="forward" class="on"></a>
                     <div class="smallpic_wrap">
                         <ul>
-                            <?php foreach ($goodsGallery as $value){
-                                echo "
-                                <li class=\"cur\">
-									<a class=\"zoomThumbActive\" href=\"javascript:void(0);\" rel=\"{gallery: 'gal1', smallimage: '{$value->path}',largeimage: '{$value->path}'}\"><img src=\"{$value->path}\"></a>
-								</li>
-                                ";
-                            }?>
+                            <li class="cur">
+                                <a class="zoomThumbActive" href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '<?php echo $first->path?>',largeimage: '<?php echo $first->path?>'}"><img src="<?php echo $first->path?>"></a>
+                            </li>
+                            <?php foreach ($goodsGallery as $value):?>
+                                <li>
+                                    <a href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '<?php echo $value->path?>',largeimage: '<?php echo $value->path?>'}"><img src="<?php echo $value->path?> "></a>
+                                </li>
+                            <?php endforeach;?>
                         </ul>
                     </div>
 

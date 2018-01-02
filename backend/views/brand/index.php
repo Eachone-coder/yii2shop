@@ -1,3 +1,4 @@
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <style>
     tr th,td{
         text-align: center;
@@ -45,22 +46,48 @@ echo \yii\widgets\LinkPager::widget([
  */
 $html=\yii\helpers\Url::to(['brand/delete']).'?id=';
 $js= <<<JS
- $("table").on('click','.btn-danger',function(){
-        if (confirm('确定删除?')){
-            var id=$(this).attr('id');
-            $.getJSON("$html"+id,function (data) {
-                if (data['status']>0){
-                    var name='#brand'+id;
-                    $(name).remove();
-                    alert('删除成功')
-                }
-                else{
-                    alert(data['status'])
-                }
-            })
-        }
-        return false;
-    });
+$('.table').on('click','.btn-danger',function() {
+    var id=$(this).attr('id');
+swal({  
+            title: '确定删除',  
+            input: 'text',  
+            confirmButtonText: '提交',  
+            confirmButtonColor: '#4cd964',  
+            showLoaderOnConfirm: true, //加载按钮是否可见  
+            preConfirm: function() {  
+                return new Promise(function(resolve) {  
+                    setTimeout(function() {  
+                        resolve();  
+                    }, 5000);  
+                });  
+            },  
+            allowOutsideClick: false //弹框外是否可点  
+        }).then(function(res) {  
+            if(res) {  
+                //实际使用过程中将此处换成ajax代码即可  
+                $.getJSON("$html"+id,function (data) {
+                    if (data['status']>0){
+                        var name='#brand'+id;
+                        $(name).remove();
+                        swal({  
+                        type: 'success',  
+                        title: '删除成功',   
+                        confirmButtonText: '确定',  
+                        confirmButtonColor: '#4cd964'  
+                }); 
+                    }
+                    else{
+                       swal({  
+                        type: 'error',  
+                        title: '删除成功',   
+                        confirmButtonText: '确定',  
+                        confirmButtonColor: '#4cd964'  
+                }); 
+                    }
+                })
+            }  
+        });  
+})
 JS;
 $this->registerJs($js);
 ?>

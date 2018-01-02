@@ -23,7 +23,11 @@
         </div>
         <div class="topnav_right fr">
             <ul>
-                <li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+                <li>您好，欢迎来到京西！[<?php if (!Yii::$app->user->isGuest){
+                     echo '<a href="'.\yii\helpers\Url::to(['site/logout']).'">'.Yii::$app->user->identity->username.'</a>';
+                    }else{
+                    echo '<a href="'.\yii\helpers\Url::to(['site/login']).'">登录</a>';
+                    }?>] [<a href="<?php echo  \yii\helpers\Url::to(['site/register'])?>">免费注册</a>] </li>
                 <li class="line">|</li>
                 <li>我的订单</li>
                 <li class="line">|</li>
@@ -46,8 +50,8 @@
         <div class="search fl">
             <div class="search_form">
                 <div class="form_left fl"></div>
-                <form action="" name="serarch" method="get" class="fl">
-                    <input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
+                <form action="<?php echo \yii\helpers\Url::to(['goods/search'])?>" name="serarch" method="get" class="fl">
+                    <input type="text" class="txt" placeholder="请输入商品关键字" name="keywords"/><input type="submit" class="btn" value="搜索" />
                 </form>
                 <div class="form_right fl"></div>
             </div>
@@ -135,34 +139,7 @@
                 <em></em>
             </div>
             <div class="cat_bd">
-<?php
-    foreach ($one as $o){
-        echo '    
-                <div class="cat item1">
-                    <h3><a href="'.\yii\helpers\Url::to(['goods/goods-category','id'=>$o->id]).'">'.$o->name.'</a> <b></b></h3>
-                    <div class="cat_detail">
-                    ';foreach ($two as $t){
-                        if ($t->parent_id==$o->id){
-                            echo '
-                        <dl class="dl_1st">
-                            <dt><a href="'.\yii\helpers\Url::to(['goods/goods-category','id'=>$t->id]).'">'.$t->name.'</a></dt>                           
-                            <dd>
-                                ';foreach ($three as $th){
-                                if ($th->parent_id==$t->id){
-                                    echo '<a href="'.\yii\helpers\Url::to(['goods/goods-category','id'=>$th->id]).'">'.$th->name.'</a>';
-                                }
-                            }echo '
-                            </dd>                          
-                        </dl>
-                        ';
-                        }
-        }echo' </div>
-                </div>
-        ';
-    }
-
-?>
-
+                <?php echo \backend\models\GoodsCategory::getCategories()?>
             </div>
 
         </div>

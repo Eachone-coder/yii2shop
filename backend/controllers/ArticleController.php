@@ -151,7 +151,7 @@ class ArticleController extends Controller{
             'ueditor'=>[
                 'class' => 'common\widgets\ueditor\UeditorAction',
                 'config'=>[
-                    'imageUrlPrefix' => "", /* 图片访问路径前缀 */
+                    'imageUrlPrefix' => "http://www.admin.shop.com", /* 图片访问路径前缀 */
                     'imagePathFormat' => "/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
                 ]
             ]

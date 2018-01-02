@@ -24,6 +24,9 @@ class GoodsCategoryController extends \yii\web\Controller {
                }else{
                    $model->makeRoot();
                }
+               $redis=new \Redis();
+               $redis->open('127.0.0.1','6379');
+               $redis->del('category_html');
                 \Yii::$app->session->setFlash('success','新增商品分类成功');
                 return $this->redirect(Url::to(['goods-category/index']));
             }
@@ -49,6 +52,9 @@ class GoodsCategoryController extends \yii\web\Controller {
                         $model->save();
                     }
                 }
+                $redis=new \Redis();
+                $redis->open('127.0.0.1','6379');
+                $redis->del('category_html');
                 \Yii::$app->session->setFlash('success','修改商品分类成功');
                 return $this->redirect(Url::to(['goods-category/index']));
             }
@@ -61,6 +67,9 @@ class GoodsCategoryController extends \yii\web\Controller {
         if ($row){
             if ($row->lft==$row->rgt-1){
                 $row->delete();
+                $redis=new \Redis();
+                $redis->open('127.0.0.1','6379');
+                $redis->del('category_html');
                 echo Json::encode(['status'=>$id]);
             }
             else{

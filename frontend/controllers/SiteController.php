@@ -1,14 +1,16 @@
 <?php
 namespace frontend\controllers;
 
-use backend\models\GoodsCategory;
+use backend\models\Member;
+use frontend\models\LoginForm;
+use frontend\models\MemberForm;
 use Yii;
 use yii\base\InvalidParamException;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -19,6 +21,7 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
+    public $enableCsrfValidation=false;
     /**
      * @inheritdoc
      */
@@ -73,14 +76,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $query=GoodsCategory::find();
-        //家用电器
-        $one=$query->where(['depth'=>0])->all();
-        //冰箱
-        $two=$query->where(['depth'=>1])->all();
-        //多门冰箱
-        $three=$query->where(['depth'=>2])->all();
-        return $this->render('index',['one'=>$one,'two'=>$two,'three'=>$three]);
+        return $this->render('index');
     }
 
     /**
@@ -95,12 +91,15 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post(),'')) {
+            //调用model的check()方法
+            if ($model->check()){
+                //跳转
+                Yii::$app->session->setFlash('success','登录成功');
+                return $this->redirect(Url::to(['site/index']));
+            }
         } else {
-            return $this->render('login', [
-                'model' => $model,
-            ]);
+            return $this->render('login');
         }
     }
 
@@ -111,9 +110,9 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
+        \Yii::$app->user->logout();
+        \Yii::$app->session->setFlash('success','注销成功');
+        return $this->redirect(['site/login']);
     }
 
     /**
@@ -147,27 +146,6 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
-    }
-
-    /**
-     * Signs user up.
-     *
-     * @return mixed
-     */
-    public function actionSignup()
-    {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
-                }
-            }
-        }
-
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -217,5 +195,30 @@ class SiteController extends Controller
         return $this->render('resetPassword', [
             'model' => $model,
         ]);
+    }
+
+    public function actionRegister(){
+        $model=new MemberForm();
+        $request=Yii::$app->request;
+        if ($request->isPost){
+            $model->load($request->post(),'');
+            $user = $model->signup();
+            if ($user) {
+                    //跳转
+                Yii::$app->session->setFlash('success','注册成功');
+                return $this->redirect(Url::to(['site/index']));
+            }
+        }else{
+            return $this->render('register');
+        }
+    }
+
+    public function actionCheck($username){
+        $row=Member::findAll(['username'=>$username]);
+        if ($row){
+            return 'false';
+        }else{
+            return 'true';
+        }
     }
 }

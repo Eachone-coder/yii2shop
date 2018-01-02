@@ -24,11 +24,11 @@ return [
         ],
         'user' => [
             //指定实现认证接口的类 一般就是账号对应的类
-            'identityClass' => 'frontend\models\User',
+            'identityClass' => 'backend\models\Member',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
             //设置默认的登录地址
-            'loginUrl' => ['login/index'],
+            'loginUrl' => ['site/login'],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
@@ -51,7 +51,7 @@ return [
             'class'=>'yii\web\urlManager',  //指定实现类
             'enablePrettyUrl' => true,      //开启URL美化
             'showScriptName' => false,      //是否显示index.php
-            'suffix'=>'.html',
+            //'suffix'=>'.html',
             'rules' => [
                 //配置规则
                 //'add'=>'goods/add',
