@@ -1,7 +1,7 @@
 <?php
 namespace frontend\models;
 
-use backend\models\Member;
+use frontend\models\Member;
 use yii\base\Model;
 
 class MemberForm extends Model{
@@ -9,6 +9,7 @@ class MemberForm extends Model{
     public $password;
     public $email;
     public $tel;
+    public $checkcode;
     public function rules()
     {
         return [
@@ -16,6 +17,7 @@ class MemberForm extends Model{
             [['username'], 'string', 'max' => 50],
             [['password', 'email'], 'string', 'max' => 100],
             [['tel'], 'string', 'max' => 11],
+            ['checkcode','safe',]
         ];
     }
 
@@ -33,8 +35,9 @@ class MemberForm extends Model{
         $member->password_hash=\Yii::$app->security->generatePasswordHash($this->password);
         $member->email=$this->email;
         $member->tel=$this->tel;
-        if ($member->save(false)){
-            \Yii::$app->user->login($member,3600);
+        $member->checkcode=$this->checkcode;
+        if ($member->save()){
+            \Yii::$app->user->login($member);
             return true;
         }
     }

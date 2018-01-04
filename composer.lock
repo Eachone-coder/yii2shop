@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "28271bb6262a4b182c46a62086c9bf52",
+    "content-hash": "0e11c03e848e0aeacc9ce1d0e36db6b1",
     "packages": [
         {
             "name": "bailangzhan/yii2-webuploader",
@@ -839,6 +839,45 @@
             ],
             "description": "desc",
             "time": "2017-01-15T06:29:37+00:00"
+        },
+        {
+            "name": "light/yii2-sweet-submit",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lichunqiang/yii2-sweet-submit.git",
+                "reference": "5ca8381f48fd4b8aa6c73062191737899d1be7ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://files.phpcomposer.com/files/lichunqiang/yii2-sweet-submit/5ca8381f48fd4b8aa6c73062191737899d1be7ca.zip",
+                "reference": "5ca8381f48fd4b8aa6c73062191737899d1be7ca",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "^1.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "light\\widgets\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "lichunqiang",
+                    "email": "light-li@hotmail.com"
+                }
+            ],
+            "description": "make yii2 form submit sweet",
+            "time": "2016-01-06T05:27:08+00:00"
         },
         {
             "name": "qiniu/php-sdk",

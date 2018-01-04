@@ -28,7 +28,7 @@ return [
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
             //设置默认的登录地址
-            'loginUrl' => ['site/login'],
+            'loginUrl' => ['login/index'],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
@@ -51,11 +51,19 @@ return [
             'class'=>'yii\web\urlManager',  //指定实现类
             'enablePrettyUrl' => true,      //开启URL美化
             'showScriptName' => false,      //是否显示index.php
-            //'suffix'=>'.html',
+            'suffix'=>'.html',
             'rules' => [
                 //配置规则
                 //'add'=>'goods/add',
             ],
+        ],
+
+        'sms'=>[
+            'class'=>\frontend\components\Sms::className(),
+            'ak' => 'LTAI1QSTNKVRlGQj',
+            'as' => 'EKCbOfg8hJg4EUgZlUE94qvbVyUH8P',
+            'singName' =>'岛上书店',
+            'templateCode' => 'SMS_120115412',
         ],
     ],
     'params' => $params,

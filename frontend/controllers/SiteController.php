@@ -2,10 +2,11 @@
 namespace frontend\controllers;
 
 use backend\models\Member;
-use frontend\models\LoginForm;
+
 use frontend\models\MemberForm;
 use Yii;
 use yii\base\InvalidParamException;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -13,9 +14,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
 use frontend\models\ContactForm;
-
 /**
  * Site controller
  */
@@ -65,6 +64,8 @@ class SiteController extends Controller
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'maxLength' => 4,
+                'minLength' => 4,
             ],
         ];
     }
@@ -78,42 +79,7 @@ class SiteController extends Controller
     {
         return $this->render('index');
     }
-
-    /**
-     * Logs in a user.
-     *
-     * @return mixed
-     */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post(),'')) {
-            //调用model的check()方法
-            if ($model->check()){
-                //跳转
-                Yii::$app->session->setFlash('success','登录成功');
-                return $this->redirect(Url::to(['site/index']));
-            }
-        } else {
-            return $this->render('login');
-        }
-    }
-
-    /**
-     * Logs out the current user.
-     *
-     * @return mixed
-     */
-    public function actionLogout()
-    {
-        \Yii::$app->user->logout();
-        \Yii::$app->session->setFlash('success','注销成功');
-        return $this->redirect(['site/login']);
-    }
+    
 
     /**
      * Displays contact page.
@@ -205,7 +171,6 @@ class SiteController extends Controller
             $user = $model->signup();
             if ($user) {
                     //跳转
-                Yii::$app->session->setFlash('success','注册成功');
                 return $this->redirect(Url::to(['site/index']));
             }
         }else{
@@ -219,6 +184,46 @@ class SiteController extends Controller
             return 'false';
         }else{
             return 'true';
+        }
+    }
+
+    public function actionSms($phone){
+        //对手机号正则验证
+        $pattern='/^1\d{10}$/';
+        $result=preg_match($pattern,$phone);
+        if ($result){
+                $valid=mt_rand(1000,9999);
+                $res=Yii::$app->sms->send($phone,$valid);
+                if ($res->Code=="OK"){
+                    //发送成功
+                    //将验证码存入redis或者session
+                    $redis=new \Redis();
+                    $redis->open('127.0.0.1','6379');
+                    $redis->set('valid_'.$phone,$valid,24*3600);
+                    return Json::encode(['status'=>'true']);
+                }else{
+                    //发送失败
+                    return Json::encode(['status'=>'发送短信失败,请联系我们的客服']);
+                }
+        }else{
+            return Json::encode(['status'=>'手机号码格式不正确']);
+        }
+
+    }
+
+    //验证手机验证码
+    public function actionValid($tel,$captcha){
+        $redis=new \Redis();
+        $redis->open('127.0.0.1','6379');
+        $valid=$redis->get('valid_'.$tel);
+        if ($valid){
+            if ($valid==$captcha){
+                return 'true';
+            }else{
+                return 'false';
+            }
+        }else{
+            return 'false';
         }
     }
 }

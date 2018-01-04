@@ -25,7 +25,8 @@
         "qiniu/php-sdk": "^7.2",
         "creocoder/yii2-nested-sets": "^0.9.0",
         "kartik-v/yii2-tree-manager": "@dev",
-        "kucha/ueditor": "*"
+        "kucha/ueditor": "*",
+        "light/yii2-sweet-submit": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

@@ -72,18 +72,18 @@
                     </li>
                     <li>
                         <label for="tel">手机号码：</label>
-                        <input type="text" class="txt" value="" name="tel" id="tel" placeholder=""/>
+                        <input type="text" class="txt" name="tel" id="tel" placeholder=""/>
                     </li>
                     <li>
                         <label for="captcha">验证码：</label>
-                        <input type="text" class="txt" value="" placeholder="请输入短信验证码" name="captcha" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>
+                        <input type="text" class="txt" placeholder="请输入短信验证码" name="captcha" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>
 
                     </li>
                     <li class="checkcode">
                         <label for="">验证码：</label>
                         <input type="text"  name="checkcode" />
-                        <img src="/images/checkcode1.jpg" alt="" />
-                        <span>看不清？<a href="">换一张</a></span>
+                        <img src="" alt="" id="changImg" class="changeCode"/>
+                        <span>看不清？<a href="javascript:void(0);" class="changeCode"  >换一张</a></span>
                     </li>
 
                     <li>
@@ -141,6 +141,52 @@
 <script type="text/javascript" src="/jquery-validation/dist/jquery.validate.js"></script>
 <script type="text/javascript" src="/jquery-validation/dist/localization/messages_zh.js"></script>
 <script type="text/javascript">
+
+    //短信验证区 start
+    function bindPhoneNum(){
+        //启用输入框
+        $('#captcha').prop('disabled',false);
+
+        var time=30;
+        var interval = setInterval(function(){
+            time--;
+            if(time<=0){
+                clearInterval(interval);
+                var html = '获取验证码';
+                $('#get_captcha').prop('disabled',false);
+            } else{
+                var html = time + ' 秒后再次获取';
+                $('#get_captcha').prop('disabled',true);
+            }
+
+            $('#get_captcha').val(html);
+        },1000);
+        //发送短信,获取输入的值
+        /*
+        点击获取验证码,先获取用户输入的手机号,将手机号码传给[site/sms]方法,该方法相对传入的手机号码做正则验证,失败,返回手机号码格式错误;成功调用组件 \Yii::$app->sms->send($phone,$valid),$phone为传入的手机号码,$valid为验证码.然后send()会发送短信给这个号码,send()会返回一个结果,判断这个结果的属性 Code是否为 OK ,Code不为OK,发送短信失败;Code为OK,发送短信成功,将验证码存到redis
+         */
+        var phone=$('#tel').val();
+        $.getJSON('<?php echo \yii\helpers\Url::to(['site/sms'])?>',{"phone":phone},function (data) {
+            if (data.status=='true'){
+                alert('发送成功');
+            }
+            else {
+                alert(data.status);
+            }
+        })
+    }
+    var hash;
+    // 验证码验证
+    jQuery.validator.addMethod("code", function(value, element) {
+        var v=value.toLowerCase();
+        var h=0;//输入的验证码的ASCII码
+        var length=v.length-1;    //输入的验证码的长度
+        for (var i=length;i>=0;--i){
+            h += v.charCodeAt(i);
+        }
+        return h==hash;
+    }, "请正确填写您的验证码");
+    //短信验证区 end
 // 在键盘按下并释放及提交后验证提交表单
             $("#signupForm").validate({
                 rules: {
@@ -149,7 +195,15 @@
                         minlength: 2,
                         //异步验证
                         //远程地址只能输出 "true" 或 "false"，不能有其他输出。
-                        remote: "<?=\yii\helpers\Url::to(['site/check'])?>"
+                        remote:{
+                            url:"<?=\yii\helpers\Url::to(['site/check'])?>",
+                            type: "get",               //数据发送方式
+                            data: {                     //要传递的数据
+                                username: function() {
+                                    return $("#username").val();
+                                }
+                            }
+                        }
                     },
                     password: {
                         required: true,
@@ -167,6 +221,27 @@
                     tel: {
                         required: true,
                         maxlength: 13
+                    },
+                    captcha:{
+                        required: true,
+                        remote: {
+                            url: "<?=\yii\helpers\Url::to(['site/valid'])?>",     //后台处理程序
+                            type: "get",               //数据发送方式
+                            data: {                     //要传递的数据
+                                tel: function() {
+                                    return $("#tel").val();
+                                },
+                                captcha: function() {
+                                    return $("#captcha").val();
+                                }
+                            }
+                        }
+                    },
+                    /*
+                    自定义验证规则
+                     */
+                    checkcode:{
+                        code: true
                     }
                 },
                 messages: {
@@ -191,7 +266,16 @@
                 errorElement: 'span'
 
             });
-
+        /*
+           点击更换验证码
+            */
+        $('.changeCode').click(function () {
+            $.getJSON('<?=\yii\helpers\Url::to(['site/captcha'])?>',{'refresh':1},function (data) {
+                $('#changImg').attr('src',data.url);
+                hash=data.hash1;
+            });
+        });
+        $('.changeCode').click();
 </script>
 </body>
 </html>
