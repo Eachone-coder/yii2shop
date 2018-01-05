@@ -1,0 +1,1 @@
+<a href="<?php echo \yii\helpers\Url::to(['goods/cart'])?>">结算</a>

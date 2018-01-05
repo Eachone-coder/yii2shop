@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Address;
+use frontend\models\Member;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -28,7 +29,7 @@ class MemberController extends Controller{
      * @return string
      */
     public function actionList(){
-        $rows=Address::find()->where(['member_id'=>\Yii::$app->user->identity->getId()])->all();
+        $rows=Address::find()->where(['member_id'=>\Yii::$app->user->identity->getId()])->orderBy('id')->all();
         return Json::encode(['data'=>$rows]);
     }
 
@@ -68,6 +69,7 @@ class MemberController extends Controller{
         $array=ArrayHelper::map($data,'name','value');
         $row->load($array,'');
         if ($row->validate()){
+            Address::updateAll(['is_default'=>0],['member_id'=>\Yii::$app->user->identity->getId()]);
             $row->save();
             return Json::encode(['data'=>$array,'id'=>$row->id]);
         }else{

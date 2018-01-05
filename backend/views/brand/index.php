@@ -1,4 +1,3 @@
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <style>
     tr th,td{
         text-align: center;
@@ -41,6 +40,7 @@ echo \yii\widgets\LinkPager::widget([
         'pagination' => $pager,
         'hideOnSinglePage'=>false,
 ]);
+\light\widgets\SweetSubmitAsset::register($this);
 /**
  * @var $this \yii\web\View
  */
@@ -48,22 +48,23 @@ $html=\yii\helpers\Url::to(['brand/delete']).'?id=';
 $js= <<<JS
 $('.table').on('click','.btn-danger',function() {
     var id=$(this).attr('id');
-swal({  
-            title: '确定删除',  
-            input: 'text',  
-            confirmButtonText: '提交',  
-            confirmButtonColor: '#4cd964',  
-            showLoaderOnConfirm: true, //加载按钮是否可见  
-            preConfirm: function() {  
-                return new Promise(function(resolve) {  
-                    setTimeout(function() {  
-                        resolve();  
-                    }, 5000);  
-                });  
-            },  
-            allowOutsideClick: false //弹框外是否可点  
-        }).then(function(res) {  
-            if(res) {  
+    swal({ 
+      title: "确定删除",              //弹窗的标题
+      text: "点击OK将删除该记录",      //弹窗的描述
+      type: "warning",              //弹窗的类型
+      showCancelButton: true,       //如果设置为true，“取消”按钮将会显示，用户点击取消按钮会关闭弹窗
+    //showConfirmButton	true	    //如果设置为false，“确认”按钮将会隐藏。
+    //confirmButtonText	"OK"	    //使用该参数来修改“确认”按钮的显示文本。
+    //confirmButtonColor	"#AEDEF4"	//使用该参数来修改“确认”按钮的背景颜色（必须是十六进制值）。
+      confirmButtonColor: '#4cd964',
+      closeOnConfirm: false,        //设置为false，用户点击“确认”按钮后，弹窗会继续保持打开状态。如果点击“确认”按钮后需要打开另一个SweetAlert弹窗，这是非常有用的
+    //closeOnCancel     这和closeOnConfirm的功能相似，只不过这个是“取消”按钮。
+      showLoaderOnConfirm: true,
+      allowOutsideClick: true, //设置为true，用户点击弹窗外部可关闭弹窗
+    },
+    function(res){ 
+      setTimeout(function(){ 
+        if(res) {  
                 //实际使用过程中将此处换成ajax代码即可  
                 $.getJSON("$html"+id,function (data) {
                     if (data['status']>0){
@@ -79,14 +80,15 @@ swal({
                     else{
                        swal({  
                         type: 'error',  
-                        title: '删除成功',   
+                        title: '删除失败',   
                         confirmButtonText: '确定',  
                         confirmButtonColor: '#4cd964'  
                 }); 
                     }
                 })
-            }  
-        });  
+            } 
+      }, 500);
+    });
 })
 JS;
 $this->registerJs($js);

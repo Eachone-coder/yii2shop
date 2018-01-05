@@ -4,7 +4,6 @@ namespace backend\models;
 use yii\base\Model;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-use yii\web\Cookie;
 
 class LoginForm extends Model
 {
@@ -48,8 +47,9 @@ class LoginForm extends Model
             if (\Yii::$app->security->validatePassword($this->password, $user->password_hash)) {
                 //密码匹配
                 //>>1.存入登录时间和ip
-                $user->last_login_time=time();
-                $user->last_login_ip = ($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : $_SERVER["SERVER_ADDR"];
+                //$user->last_login_time=time();
+                ////$user->last_login_ip =($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : $_SERVER["SERVER_ADDR"];
+                $user->last_login_ip = \Yii::$app->getRequest()->getUserIP();
                 $user->save();
                 $time=0;
                 if ($this->remeberMe){
@@ -74,6 +74,7 @@ class LoginForm extends Model
                 'class'=>TimestampBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT=>['last_login_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE=>['last_login_time']
                 ],
             ],
         ];

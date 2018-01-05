@@ -30,6 +30,39 @@ class LoginForm extends Model{
                         $time=3600;
                     }
                     \Yii::$app->user->login($member,$time);
+                    //读cookie
+                    $cookie=\Yii::$app->request->cookies;
+                    $data=$cookie->getValue('cart');
+                    $datas=unserialize($data);
+                    if ($datas){
+                        $ids=array_keys($datas);
+                        /*
+                         * [goods_id=>amount,goods_id=>amount,...]
+                        思路,需要将已存在的没未存在的分开
+                        */
+                        $row=[];
+                        foreach ($ids as $id){
+                            $row=Cart::findOne(['goods_id'=>$id,'member_id'=>\Yii::$app->user->identity->getId()]);
+                            if ($row){
+                                $row->amount+=$datas[$id];
+                            }
+                            else{
+                                $row=new Cart();
+                                $row->amount=$datas[$id];
+                                $row->member_id=\Yii::$app->user->identity->getId();
+                                $row->goods_id=$id;
+                            }
+                            if ($row->validate()){
+                                $row->save();
+                            }else{
+                                $row->getErrors();
+                            }
+                        }
+                        //删除cookie
+                        $writeCookie=\Yii::$app->response->cookies;
+                        $writeCookie->remove('cart');
+                    }
+
                     $member->last_login_ip=\Yii::$app->getRequest()->getUserIP();
                     $member->last_login_time=time();
                     $member->save();

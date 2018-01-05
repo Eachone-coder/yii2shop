@@ -168,12 +168,29 @@ class SiteController extends Controller
         $request=Yii::$app->request;
         if ($request->isPost){
             $model->load($request->post(),'');
-            $user = $model->signup();
-            if ($user) {
-                    //跳转
-                return $this->redirect(Url::to(['site/index']));
+            //验证手机号和短信验证码
+            $redis= new \Redis();
+            $redis->open('127.0.0.1','6379');
+            $phone=$redis->get($model->tel.'_number');
+            $code=$redis->get('valid_'.$phone);
+            if ($phone){
+                if ($model->captcha==$code){
+                    $user = $model->signup();
+                    if ($user) {
+                        //跳转
+                        return $this->redirect(Url::to(['site/index']));
+                    }
+                }
+                else{
+                    var_dump('验证码不匹配');
+                }
+
             }
-        }else{
+            else{
+                var_dump('手机号码不匹配');
+            }
+        }
+        else{
             return $this->render('register');
         }
     }
@@ -200,6 +217,8 @@ class SiteController extends Controller
                     $redis=new \Redis();
                     $redis->open('127.0.0.1','6379');
                     $redis->set('valid_'.$phone,$valid,24*3600);
+                    //存入当前手机号码
+                    $redis->set($phone.'_number',$phone,24*3600);
                     return Json::encode(['status'=>'true']);
                 }else{
                     //发送失败

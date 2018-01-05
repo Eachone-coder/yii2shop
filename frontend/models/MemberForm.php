@@ -10,6 +10,7 @@ class MemberForm extends Model{
     public $email;
     public $tel;
     public $checkcode;
+    public $captcha;
     public function rules()
     {
         return [
@@ -17,7 +18,7 @@ class MemberForm extends Model{
             [['username'], 'string', 'max' => 50],
             [['password', 'email'], 'string', 'max' => 100],
             [['tel'], 'string', 'max' => 11],
-            ['checkcode','safe',]
+            [['checkcode','captcha'],'safe',]
         ];
     }
 

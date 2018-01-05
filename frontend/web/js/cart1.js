@@ -5,7 +5,14 @@
 */
 
 $(function(){
-	
+    //总计金额
+    var total = 0;
+    $(".col5 span").each(function(){
+        total += parseFloat($(this).text());
+    });
+
+    $("#total").text(total.toFixed(2));
+
 	//减少
 	$(".reduce_num").click(function(){
 		var amount = $(this).parent().find(".amount");
