@@ -19,7 +19,7 @@
             <td><?php echo $row->status?'正常':'隐藏'?></td>
             <td>
                 <?php echo \yii\bootstrap\Html::a('修改',\yii\helpers\Url::to(['article-category/update','id'=>$row->id]),['class'=>'btn btn-primary btn-sm'])?>
-                <?php echo \yii\bootstrap\Html::submitButton('删除',['class'=>'btn btn-danger btn-sm','id'=>$row->id])?>
+                <?php echo \yii\bootstrap\Html::submitButton('删除',['class'=>'btn btn-danger btn-sm','d-id'=>$row->id])?>
             </td>
         </tr>
     <?php endforeach;?>
@@ -34,22 +34,27 @@ echo \yii\widgets\LinkPager::widget(['pagination' => $pager,'hideOnSinglePage' =
 /**
  * @var $this \yii\web\View
  */
+$this->registerJsFile('@web/layer/layer.js',['depends'=>\yii\web\JqueryAsset::className()]);
 $html=\yii\helpers\Url::to(['article-category/delete']).'?id=';
 $js=<<< JS
-    $('.btn-danger').click(function(data) {
-       if (confirm('确定删除')){
-           var id=$(this).attr('id');
-       $.getJSON("$html"+id,function(data) {
-            if (data['status']>0){
-                var name='#category'+id;
-                $(name).remove();
-                alert('删除成功');
-            }
-            else{
-                alert('删除失败'+date);
-            }
-       });
-       }
+    $('.btn-danger').click(function() {
+        layer.confirm('确定删除?', {icon: 3, title:'提示'}, function(index){
+          var id=$('.btn-danger').attr('d-id');
+          console.debug(id);
+               $.getJSON("$html"+id,function(data) {
+                    if (data['status']>0){
+                        var name='#category'+id;
+                        $(name).remove();
+                        layer.msg('删除成功');
+                    }
+                    else{
+                        layer.msg('删除失败'+date);
+                    }
+               });
+  
+  layer.close(index);
+});
+       
     });
 JS;
 $this->registerJs($js);

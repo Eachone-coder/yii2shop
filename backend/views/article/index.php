@@ -56,22 +56,51 @@ echo \yii\widgets\LinkPager::widget([
  * @var $this \yii\web\View
  */
 $html=\yii\helpers\Url::to(['article/delete']).'?id=';
+\light\widgets\SweetSubmitAsset::register($this);
 $js=<<<JS
     $('.btn-danger').on('click',function() {
-               if (confirm('确定删除?')){
             var id=$(this).attr('id');
-            $.getJSON("$html"+id,function (data) {
-                if (data['status']>0){
-                    var name='#article'+id;
-                    $(name).remove();
-                    alert('删除成功')
-                }
-                else{
-                    alert(data['status'])
-                }
-            })
-        }
-        return false;
+    swal({ 
+      title: "确定删除",              //弹窗的标题
+      text: "点击OK将删除该记录",      //弹窗的描述
+      type: "warning",              //弹窗的类型
+      showCancelButton: true,       //如果设置为true，“取消”按钮将会显示，用户点击取消按钮会关闭弹窗
+    //showConfirmButton	true	    //如果设置为false，“确认”按钮将会隐藏。
+    //confirmButtonText	"OK"	    //使用该参数来修改“确认”按钮的显示文本。
+    //confirmButtonColor	"#AEDEF4"	//使用该参数来修改“确认”按钮的背景颜色（必须是十六进制值）。
+      confirmButtonColor: '#4cd964',
+      closeOnConfirm: false,        //设置为false，用户点击“确认”按钮后，弹窗会继续保持打开状态。如果点击“确认”按钮后需要打开另一个SweetAlert弹窗，这是非常有用的
+    //closeOnCancel     这和closeOnConfirm的功能相似，只不过这个是“取消”按钮。
+      showLoaderOnConfirm: true,
+      allowOutsideClick: true, //设置为true，用户点击弹窗外部可关闭弹窗
+    },
+    function(res){ 
+      setTimeout(function(){ 
+        if(res) {  
+                //实际使用过程中将此处换成ajax代码即可  
+                $.getJSON("$html"+id,function (data) {
+                    if (data['status']>0){
+                        var name='#brand'+id;
+                        $(name).remove();
+                        swal({  
+                        type: 'success',  
+                        title: '删除成功',   
+                        confirmButtonText: '确定',  
+                        confirmButtonColor: '#4cd964'  
+                }); 
+                    }
+                    else{
+                       swal({  
+                        type: 'error',  
+                        title: '删除失败',   
+                        confirmButtonText: '确定',  
+                        confirmButtonColor: '#4cd964'  
+                }); 
+                    }
+                })
+            } 
+      }, 500);
+    });
     });
 JS;
 $this->registerJs($js);
