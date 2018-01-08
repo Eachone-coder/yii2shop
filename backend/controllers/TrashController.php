@@ -3,6 +3,7 @@ namespace backend\controllers;
 
 use backend\filter\RbacFilter;
 use backend\models\Article;
+use backend\models\ArticleCategory;
 use backend\models\Brand;
 use yii\data\Pagination;
 use yii\web\Controller;
@@ -12,7 +13,7 @@ class TrashController extends Controller{
     {
         $query=Article::find()->where(['status'=>'-1']);
         $pager=new Pagination([
-            'pageSize' => 7,
+            'pageSize' => 6,
             'totalCount' => $query->count(),
         ]);
         $rows=$query->limit($pager->limit)->offset($pager->offset)->all();
@@ -23,11 +24,22 @@ class TrashController extends Controller{
     {
         $query=Brand::find()->where(['status'=>'-1']);
         $pager=new Pagination([
-            'pageSize' => 7,
+            'pageSize' => 6,
             'totalCount' => $query->count(),
         ]);
         $rows=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('brand',['rows'=>$rows,'pager'=>$pager]);
+    }
+
+    public function actionArticleCategory()
+    {
+        $query=ArticleCategory::find()->where(['status'=>'-1']);
+        $pager=new Pagination([
+            'pageSize' => 6,
+            'totalCount' => $query->count(),
+        ]);
+        $rows=$query->limit($pager->limit)->offset($pager->offset)->all();
+        return $this->render('article-category',['rows'=>$rows,'pager'=>$pager]);
     }
     public function behaviors()
     {
