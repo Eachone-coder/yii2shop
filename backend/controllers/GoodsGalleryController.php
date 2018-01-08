@@ -10,7 +10,7 @@ use Qiniu\Auth;
 // 引入上传类
 use Qiniu\Storage\UploadManager;
 use yii\helpers\Json;
-class GoodsGalleryController extends Controller{
+class GoodsGalleryController extends BaseController {
     public $enableCsrfValidation=false;
     public function actionAdd(){
         $model=new GoodsGallery();
@@ -84,13 +84,5 @@ class GoodsGalleryController extends Controller{
             }
         }
     }
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
-        ];
-    }
+
 }

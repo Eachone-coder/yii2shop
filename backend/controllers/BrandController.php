@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use backend\filter\RbacFilter;
 use backend\models\Brand;
 use yii\data\Pagination;
 use yii\helpers\Json;
@@ -13,7 +12,7 @@ use Qiniu\Auth;
 // 引入上传类
 use Qiniu\Storage\UploadManager;
 
-class BrandController extends \yii\web\Controller
+class BrandController extends BaseController
 {
     public $enableCsrfValidation=false;
 
@@ -167,15 +166,5 @@ class BrandController extends \yii\web\Controller
                 echo Json::encode(['status'=>0]);
             }
         }
-    }
-
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
-        ];
     }
 }

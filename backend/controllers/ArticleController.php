@@ -1,16 +1,15 @@
 <?php
 namespace backend\controllers;
 
-use backend\filter\RbacFilter;
 use backend\models\Article;
 use backend\models\ArticleCategory;
 use backend\models\ArticleDetail;
 use backend\models\ArticleSearchForm;
 use yii\data\Pagination;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
-use yii\web\Controller;
 
-class ArticleController extends Controller{
+class ArticleController extends BaseController {
     /**
      * @return string
      */
@@ -119,6 +118,9 @@ class ArticleController extends Controller{
         }
     }
 
+    /**
+     * @param $id
+     */
     public function actionEdit($id){
         $row=Article::findOne(['id'=>$id]);
         if ($row){
@@ -139,6 +141,7 @@ class ArticleController extends Controller{
         $model=Article::findOne($id);
         $sonModel=ArticleDetail::findOne($id);
         $category=ArticleCategory::find()->where(['status'=>[0,1]])->all();
+        $category=ArrayHelper::map($category,'id','name');
         return $this->render('show',['model'=>$model,'sonModel'=>$sonModel,'category'=>$category]);
     }
 
@@ -155,15 +158,6 @@ class ArticleController extends Controller{
                     'imagePathFormat' => "/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
                 ]
             ]
-        ];
-    }
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
         ];
     }
 }

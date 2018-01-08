@@ -19,7 +19,7 @@ use Qiniu\Auth;
 // 引入上传类
 use Qiniu\Storage\UploadManager;
 
-class GoodsController extends Controller
+class GoodsController extends BaseController
 {
     public $enableCsrfValidation = false;
 
@@ -200,8 +200,8 @@ class GoodsController extends Controller
 
     public function actionShow($id){
         $row=GoodsIntro::findOne(['goods_id'=>$id]);
-
-        return $this->render('show',['row'=>$row]);
+        $gallerys=GoodsGallery::findAll(['goods_id'=>$id]);
+        return $this->render('show',['row'=>$row,'gallerys'=>$gallerys]);
     }
     /**
      * @return array
@@ -216,15 +216,6 @@ class GoodsController extends Controller
                     'imagePathFormat' => "/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
                 ]
             ]
-        ];
-    }
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
         ];
     }
 }

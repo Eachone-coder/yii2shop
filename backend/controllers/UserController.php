@@ -16,7 +16,7 @@ class UserController extends \yii\web\Controller
      */
     public function actionIndex()
     {
-        $query=User::find()->where(['status'=>1]);
+        $query=User::find();
         $pager=new Pagination(['totalCount' => $query->count(),'pageSize' => 5]);
         $rows=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['rows'=>$rows,'pager'=>$pager]);
@@ -121,7 +121,7 @@ class UserController extends \yii\web\Controller
         $row=User::findOne(['id'=>$id]);
         if ($row){
             $authManager->revokeAll($id);
-            $row->status=0;
+            $row->delete();
             $row->save();
             echo Json::encode(['status'=>$id]);
         }

@@ -6,7 +6,7 @@ use backend\models\LoginForm;
 use yii\captcha\CaptchaAction;
 use yii\web\Controller;
 
-class LoginController extends Controller{
+class LoginController extends BaseController{
     /**
      * @return string|\yii\web\Response
      */
@@ -50,15 +50,6 @@ class LoginController extends Controller{
                 'maxLength' => 4,
                 'height' => 34,
                 'padding' => 0
-            ],
-        ];
-    }
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
             ],
         ];
     }

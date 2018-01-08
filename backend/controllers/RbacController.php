@@ -10,7 +10,7 @@ use yii\helpers\Url;
 use yii\rbac\Role;
 use yii\web\Controller;
 
-class RbacController extends Controller{
+class RbacController extends BaseController{
     public function actionIndex()
     {
         $authManager=\Yii::$app->authManager;
@@ -159,14 +159,5 @@ class RbacController extends Controller{
         $role=$authManager->getRole($name);
         $authManager->remove($role);
         echo Json::encode(['status'=>1]);
-    }
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
-        ];
     }
 }

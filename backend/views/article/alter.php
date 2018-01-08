@@ -2,7 +2,6 @@
 $form=\yii\bootstrap\ActiveForm::begin();
     echo $form->field($model,'name')->textInput(['placeholder'=>'文章标题']);
     echo $form->field($model,'article_category_id')->dropDownList(\yii\helpers\ArrayHelper::map($category,'id','name'));
-//    echo $form->field($model,'intro')->textarea(['rows'=>4,'placeholder'=>'文章简介']);
     echo $form->field($model,'intro')->widget(\yii\redactor\widgets\Redactor::className(),[
         'clientOptions' => [
             'imageManagerJson' => ['/redactor/upload/image-json'],

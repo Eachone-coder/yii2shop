@@ -1,13 +1,12 @@
 <?php
 namespace backend\controllers;
 
-use backend\filter\RbacFilter;
+
 use backend\models\User;
 use backend\models\UserForm;
 use yii\helpers\Url;
-use yii\web\Controller;
 
-class AdminController extends Controller{
+class AdminController extends BaseController {
     public function actionIndex()
     {
         //查邮箱
@@ -46,13 +45,4 @@ class AdminController extends Controller{
         return $this->render('edit',['model'=>$model]);
     }
 
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
-        ];
-    }
 }

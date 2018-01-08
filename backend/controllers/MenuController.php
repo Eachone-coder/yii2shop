@@ -8,7 +8,7 @@ use yii\helpers\Url;
 use yii\rbac\Permission;
 use yii\web\Controller;
 
-class MenuController extends Controller{
+class MenuController extends BaseController {
     /**
      * @return string
      */
@@ -100,14 +100,6 @@ class MenuController extends Controller{
             echo Json::encode(['status'=>0]);
         }
     }
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
-        ];
-    }
+
 
 }

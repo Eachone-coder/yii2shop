@@ -6,7 +6,7 @@ use backend\models\GoodsCategory;
 use yii\helpers\Json;
 use yii\helpers\Url;
 
-class GoodsCategoryController extends \yii\web\Controller {
+class GoodsCategoryController extends BaseController {
     public function actionIndex(){
         $model=GoodsCategory::find()->all();
         return $this->render('index',['model'=>$model]);
@@ -81,13 +81,4 @@ class GoodsCategoryController extends \yii\web\Controller {
         }
     }
 
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
-        ];
-    }
 }

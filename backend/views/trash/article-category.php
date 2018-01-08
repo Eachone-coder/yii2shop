@@ -18,8 +18,8 @@
             <td><?php echo $row->sort?></td>
             <td><?php echo $row->status?'正常':'隐藏'?></td>
             <td>
-                <?php echo \yii\helpers\Html::submitButton('隐藏',['class'=>'btn btn-primary btn-sm','id'=>$row->id])?>
-                <?php echo \yii\helpers\Html::submitButton('彻底删除',['class'=>'btn btn-danger btn-sm','id'=>$row->id])?>
+                <?php echo \yii\helpers\Html::submitButton('隐藏',['class'=>'btn btn-primary btn-sm','e-id'=>$row->id])?>
+                <?php echo \yii\helpers\Html::submitButton('彻底删除',['class'=>'btn btn-danger btn-sm','d-id'=>$row->id])?>
             </td>
         </tr>
     <?php endforeach;?>
@@ -31,12 +31,12 @@ echo \yii\widgets\LinkPager::widget(['pagination' => $pager,'hideOnSinglePage' =
  */
 $this->registerJsFile('@web/layer/layer.js',['depends'=>\yii\web\JqueryAsset::className()]);
 $html=\yii\helpers\Url::to(['article-category/del']).'?id=';
+$editHtml=\yii\helpers\Url::to(['article-category/edit']).'?id=';
 $js=<<< JS
     $('.btn-danger').click(function() {
         layer.confirm('确定删除?', {icon: 3, title:'提示'}, function(index){
           var id=$('.btn-danger').attr('d-id');
-          console.debug(id);
-               $.getJSON("$html"+id,function(data) {
+               $.getJSON("$editHtml"+id,function(data) {
                     if (data['status']>0){
                         var name='#category'+id;
                         $(name).remove();
@@ -46,10 +46,26 @@ $js=<<< JS
                         layer.msg('删除失败'+date);
                     }
                });
-  
-  layer.close(index);
-});
-       
+                layer.close(index);
+            });
+        });
+
+//隐藏
+$('.btn-primary').click(function() {
+    layer.confirm('确定修改为隐藏?', {icon: 3, title:'提示'},function() {
+        var id=$('.btn-primary').attr('e-id');
+        $.getJSON("$html"+id,function(data) {
+                    if (data['status']>0){
+                        var name='#category'+id;
+                        $(name).remove();
+                        layer.msg('修改为隐藏成功');
+                    }
+                    else{
+                        layer.msg('删除失败'+date);
+                    }
+               });
+                layer.close();
     });
+});
 JS;
 $this->registerJs($js);

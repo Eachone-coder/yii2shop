@@ -8,7 +8,7 @@ use backend\models\Brand;
 use yii\data\Pagination;
 use yii\web\Controller;
 
-class TrashController extends Controller{
+class TrashController extends BaseController {
     public function actionArticle()
     {
         $query=Article::find()->where(['status'=>'-1']);
@@ -41,13 +41,5 @@ class TrashController extends Controller{
         $rows=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('article-category',['rows'=>$rows,'pager'=>$pager]);
     }
-    public function behaviors()
-    {
-        return [
-            'rbac'=>[
-                'class'=>RbacFilter::className(),
-                'except' => ['index','logout','upload','captcha','ueditor'],
-            ],
-        ];
-    }
+
 }

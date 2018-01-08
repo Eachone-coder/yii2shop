@@ -31,8 +31,8 @@
             <td><?php echo $row->status==-1?'删除':'正常'?></td>
             <td><?php echo date('Y-m-d',$row->create_time)?></td>
             <td>
-                <?php echo \yii\helpers\Html::submitButton('隐藏',['class'=>'btn btn-primary btn-sm','id'=>$row->id])?>
-                <?php echo \yii\helpers\Html::submitButton('彻底删除',['class'=>'btn btn-danger btn-sm','id'=>$row->id])?>
+                <?php echo \yii\helpers\Html::submitButton('隐藏',['class'=>'btn btn-primary btn-sm','e-id'=>$row->id])?>
+                <?php echo \yii\helpers\Html::submitButton('彻底删除',['class'=>'btn btn-danger btn-sm','d-id'=>$row->id])?>
             </td>
         </tr>
     <?php endforeach;?>
@@ -44,41 +44,42 @@ echo \yii\widgets\LinkPager::widget([
 /**
  * @var $this \yii\web\View
  */
+$this->registerJsFile('@web/layer/layer.js',['depends'=>\yii\web\JqueryAsset::className()]);
 $html=\yii\helpers\Url::to(['article/del']).'?id=';
 $editHtml=\yii\helpers\Url::to(['article/edit']).'?id=';
 $js=<<<JS
-    $('.table').on('click','.btn-danger',function() {
-               if (confirm('确定删除?')){
-            var id=$(this).attr('id');
-            $.getJSON("$html"+id,function (data) {
-                if (data['status']>0){
-                    var name='#article'+id;
-                    $(name).remove();
-                    alert('删除成功')
-                }
-                else{
-                    alert(data['status'])
-                }
-            })
-        }
-        return false;
-    });
+               
+     $('.btn-danger').click(function() {
+        layer.confirm('确定删除?', {icon: 3, title:'提示'}, function(index){
+          var id=$('.btn-danger').attr('d-id');
+               $.getJSON("$html"+id,function(data) {
+                    if (data['status']>0){
+                        var name='#article'+id;
+                        $(name).remove();
+                        layer.msg('删除成功');
+                    }
+                    else{
+                        layer.msg('删除失败'+date);
+                    }
+               });
+                layer.close(index);
+            });
+        });          
 
-    $('table').on('click','.btn-primary',function() {
-                   if (confirm('确定还原为隐藏?')){
-                var id=$(this).attr('id');
+ $('table').on('click','.btn-primary',function() {
+     layer.confirm('确定还原为隐藏?',{icon: 3, title:'提示'},function(edit){
+                var id=$('.btn-primary').attr('e-id');
                 $.getJSON("$editHtml"+id,function (data) {
                     if (data['status']>0){
                         var name='#article'+id;
                         $(name).remove();
-                        alert('还原成功')
+                        layer.msg('还原成功');
                     }
                     else{
-                        alert(data['status'])
+                        layer.msg(data['status']);
                     }
-                })
-            }
-            return false;
-        });
+                });
+     })
+ });
 JS;
 $this->registerJs($js);
