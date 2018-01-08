@@ -83,6 +83,21 @@ class ArticleCategoryController extends \yii\web\Controller
     }
 
     /**
+     * 文章分类删除(强制删除)
+     * @param $id
+     */
+    public function actionDel($id){
+        $row=ArticleCategory::findOne($id);
+        if ($row){
+            $row->delete();
+            echo json_encode(['status'=>$id]);
+        }
+        else{
+            echo json_encode(['status'=>$row->getErrors()]);
+        }
+    }
+
+    /**
      * RBAC权限控制
      * @return array
      */

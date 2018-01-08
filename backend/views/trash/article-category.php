@@ -23,11 +23,6 @@
             </td>
         </tr>
     <?php endforeach;?>
-    <tr>
-        <td colspan="5">
-            <?=\yii\bootstrap\Html::a('增加',\yii\helpers\Url::to(['article-category/add']),['class'=>'btn btn-info btn-lg'])?>
-        </td>
-    </tr>
 </table>
 <?php
 echo \yii\widgets\LinkPager::widget(['pagination' => $pager,'hideOnSinglePage' => false]);
@@ -35,7 +30,7 @@ echo \yii\widgets\LinkPager::widget(['pagination' => $pager,'hideOnSinglePage' =
  * @var $this \yii\web\View
  */
 $this->registerJsFile('@web/layer/layer.js',['depends'=>\yii\web\JqueryAsset::className()]);
-$html=\yii\helpers\Url::to(['article-category/delete']).'?id=';
+$html=\yii\helpers\Url::to(['article-category/del']).'?id=';
 $js=<<< JS
     $('.btn-danger').click(function() {
         layer.confirm('确定删除?', {icon: 3, title:'提示'}, function(index){
