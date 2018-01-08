@@ -10,6 +10,7 @@ use frontend\models\Cart;
 use frontend\models\Order;
 use frontend\models\OrderGoods;
 use yii\db\Exception;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Controller;
