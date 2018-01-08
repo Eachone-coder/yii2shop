@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>京西商城</title>
+    <title>岛上书店</title>
     <link rel="stylesheet" href="/style/base.css" type="text/css">
     <link rel="stylesheet" href="/style/global.css" type="text/css">
     <link rel="stylesheet" href="/style/header.css" type="text/css">

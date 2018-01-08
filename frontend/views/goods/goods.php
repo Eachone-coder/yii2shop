@@ -3,6 +3,7 @@
  * @var $this \yii\web\View
  */
 echo $this->render('@webroot/public/top');
+echo $this->render('@webroot/public/login');
 echo '
 <!-- jqzoom 效果 -->
 <link rel="stylesheet" href="/style/goods.css" type="text/css">

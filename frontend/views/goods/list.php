@@ -3,6 +3,7 @@
  * @var $this \yii\web\View
  */
 echo $this->render('@webroot/public/top');
+echo $this->render('@webroot/public/login');
 echo '<link rel="stylesheet" href="/style/list.css" type="text/css">';
 echo '<link rel="stylesheet" href="/style/common.css" type="text/css">';
 echo '<script type="text/javascript" src="/js/list.js"></script>';

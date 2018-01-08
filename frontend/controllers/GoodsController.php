@@ -5,7 +5,11 @@ use backend\models\GoodsCategory;
 use backend\models\GoodsGallery;
 use backend\models\GoodsIntro;
 use backend\models\Goods;
+use frontend\models\Address;
 use frontend\models\Cart;
+use frontend\models\Order;
+use frontend\models\OrderGoods;
+use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Controller;
@@ -199,5 +203,117 @@ class GoodsController extends Controller{
         }else{
             Cart::deleteAll(['id'=>$id]);
         }
+    }
+
+    //提交订单页
+    public function actionOrder(){
+        $model=new Order();
+
+        $address=Address::findAll(['member_id'=>\Yii::$app->user->identity->id]);
+
+        $carts=Cart::findAll(['member_id'=>\Yii::$app->user->identity->id]);
+        $ids=ArrayHelper::map($carts,'goods_id','goods_id');
+        $amount=ArrayHelper::map($carts,'goods_id','amount');
+
+        $goods=Goods::find()->where(['in','id',$ids])->all();
+        $goods_name=ArrayHelper::map($goods,'id','name');
+        $goods_logo=ArrayHelper::map($goods,'id','logo');
+        $goods_price=ArrayHelper::map($goods,'id','shop_price');
+
+        $request=\Yii::$app->request;
+        if ($request->isPost){
+            $model->load($request->post(),'');
+            //var_dump($model);die;
+
+            $post_data=$request->post();
+            //var_dump($request->post());die;
+            //收货地址
+            $address=Address::findOne(['id'=>$post_data['address_id']]);
+            //var_dump($address);die;
+            $model->member_id=\Yii::$app->user->identity->id;
+            $model->name=$address->name;
+            $model->province=$address->cmbProvince;
+            $model->city=$address->cmbCity;
+            $model->area=$address->cmbArea;
+            $model->address=$address->address;
+            $model->tel=$address->tel;
+            //配送方式
+            $model->delivery_name=Order::$delivery[$model->delivery_id][0];
+            $model->delivery_price=Order::$delivery[$model->delivery_id][1];
+            //支付方式
+            $model->payment_id=1;
+            $model->payment_name="支付宝";
+            //订单状态
+            $model->status=1;
+            $model->trade_no='pay001';
+            $model->total=0;
+            $model->create_time=time();
+
+            //开启事务
+            $transaction=\Yii::$app->db->beginTransaction();
+            try{
+                //var_dump($model);die;
+                if ($model->validate()){
+                    $model->save();
+                }
+                else{
+                    var_dump($model->getErrors());
+                }
+                //总金额
+                $sum=0;
+                //order_goods表
+                foreach ($carts as $cart){
+                    $goods=Goods::findOne(['id'=>$cart->goods_id]);
+                    if ($goods->stock>=$cart->amount){
+                        $order_goods=new OrderGoods();
+                        $order_goods->order_id=$model->id;
+                        $order_goods->goods_id=$cart->goods_id;
+                        $order_goods->goods_name=$goods_name[$cart->goods_id];
+                        $order_goods->logo=$goods_logo[$cart->goods_id];
+                        $order_goods->price=$goods_price[$cart->goods_id];
+                        $order_goods->amount=$cart->amount;
+                        $order_goods->total=$cart->amount*$goods_price[$cart->goods_id];
+                        $sum+=$order_goods->total;
+                        $order_goods->save();
+                        //
+                        $goods->stock-=$order_goods->amount;
+                        $goods->save(false);
+
+                        //
+                    }else{
+                        throw new Exception('库存不足');
+                    }
+                }
+                $model->total=$sum;
+                $model->save();
+                //清空购物车
+                Cart::deleteAll(['member_id'=>\Yii::$app->user->identity->id]);
+                //提交事务
+                $transaction->commit();
+                return $this->redirect(['goods/order-goods']);
+            }catch (Exception $exception){
+                //事务回滚
+                $transaction->rollBack();
+            }
+        }else{
+            return $this->render('order',['address'=>$address,'goods'=>$goods,'amount'=>$amount]);
+        }
+
+    }
+
+    /**
+     * @return string
+     */
+    public function actionOrderGoods(){
+        return $this->render('order-goods');
+    }
+
+    /**
+     * @return string
+     */
+    public function actionOrderList(){
+        $model=Order::find()->where(['member_id'=>\Yii::$app->user->identity->id])->all();
+        $gallerys=OrderGoods::find()->all();
+        return $this->render('order-list',['rows'=>$model,'gallerys'=>$gallerys]);
     }
 }

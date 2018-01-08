@@ -1,14 +1,14 @@
 <?php
 namespace frontend\controllers;
 
-use light\widgets\SweetSubmitAsset;
+
 use yii\helpers\Url;
 use yii\web\Controller;
+use frontend\controllers\BaseController;
 use frontend\models\LoginForm;
-use yii\web\JqueryAsset;
 
 
-class LoginController extends Controller{
+class LoginController extends BaseController {
     public $enableCsrfValidation=false;
     /**
      * @return string|\yii\web\Response
@@ -27,9 +27,9 @@ class LoginController extends Controller{
                     //跳转
                     return $this->redirect(Url::to(['site/index']));
                 }else if ($result=='1'){
-                   $model->addError('username','用户名不存在');
+                   return $this->errorJump(Url::to(['login/index']),'用户名不存在');
                 }else{
-                    $model->addError('password','密码不正确');
+                    return $this->errorJump(Url::to(['login/index']),'密码');
                 }
             }else{
                 var_dump($model->getErrors());
