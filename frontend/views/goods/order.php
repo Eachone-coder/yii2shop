@@ -69,7 +69,7 @@ echo '<script type="text/javascript" src="/js/cart2.js"></script>';
                     <?php foreach (frontend\models\Order::$delivery as $k=>$v):?>
                     <tr <?=$k==1?'class="cur"':''?>>
                         <td><input type="radio" name="delivery_id" <?=$k==1?'checked':''?> value="<?=$k?>"/><?=$v[0]?></td>
-                        <td>￥<?=$v[1]?></td>
+                        <td><?=$v[1]?></td>
                         <td><?=$v[2]?></td>
                     </tr>
                     <?php endforeach;?>
@@ -168,19 +168,19 @@ echo '<script type="text/javascript" src="/js/cart2.js"></script>';
                         <ul>
                             <li>
                                 <span>4 件商品，总商品金额：</span>
-                                <em id="total">￥<?=$price?></em>
+                                <em id="total"><?=$price?></em>
                             </li>
                             <li>
                                 <span>返现：</span>
-                                <em id="back">-￥3.00</em>
+                                <em id="back">3.00</em>
                             </li>
                             <li>
                                 <span>运费：</span>
-                                <em id="costs">￥10.00</em>
+                                <em id="costs">10.00</em>
                             </li>
                             <li>
                                 <span>应付总额：</span>
-                                <em id="money">￥</em>
+                                <em id="money"></em>
                             </li>
                         </ul>
                     </td>
@@ -195,7 +195,7 @@ echo '<script type="text/javascript" src="/js/cart2.js"></script>';
 
     <div class="fillin_ft">
         <button><span>提交订单</span></button>
-        <p>应付总额：<strong>￥<?=$price?>元</strong></p>
+        <p>应付总额：<strong id="m"></strong></p>
     </div>
 
 
@@ -234,7 +234,13 @@ echo '<script type="text/javascript" src="/js/cart2.js"></script>';
 
         $(".delivery_select input").click(function () {
             $('#costs').text($(this).closest('tr').find('td:eq(1)').text());
-    });
+            var total=parseFloat($('#total').text());
+            var back=parseFloat($('#back').text());
+            var costs=parseFloat($('#costs').text());
+            var mian=total-back+costs;
+            $('#money').text('￥'+mian+'元');
+            $('#m').text('￥'+mian+'元');
+        });
 </script>
 </body>
 </html>

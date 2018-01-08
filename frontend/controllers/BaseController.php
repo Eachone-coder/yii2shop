@@ -38,4 +38,5 @@ class BaseController extends Controller
         $str .= '</html>';
         echo $str;
     }
+
 }
