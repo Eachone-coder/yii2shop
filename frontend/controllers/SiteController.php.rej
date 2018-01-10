@@ -1,0 +1,9 @@
+diff a/frontend/controllers/SiteController.php b/frontend/controllers/SiteController.php	(rejected hunks)
+@@ -82,7 +82,6 @@
+             */
+             $contents=$this->render('index');
+             file_put_contents('index.html',$contents);
+-            return $this->render('@web/index.html');
+             return $this->render('index.html');
+     }
+     

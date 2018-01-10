@@ -82,7 +82,7 @@ class SiteController extends Controller
             */
             $contents=$this->render('index');
             file_put_contents('index.html',$contents);
-            return $this->render('index.html');
+            return $this->render('\index.html');
     }
     
 
