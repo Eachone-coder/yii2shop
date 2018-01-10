@@ -40,7 +40,7 @@ $form=\yii\bootstrap\ActiveForm::begin(['method' => 'get','action' => \yii\helpe
             <td><?php echo $row->view_times?>次</td>
             <td>
                 <?php echo \yii\bootstrap\Html::a('相册',\yii\helpers\Url::to(['goods/gallery','id'=>$row->id]),['class'=>'btn btn-info btn-sm'])?>
-                <?php echo \yii\bootstrap\Html::a('预览',\yii\helpers\Url::to(['goods/show','id'=>$row->id]),['class'=>'btn btn-success btn-sm'])?>
+                <?php echo \yii\bootstrap\Html::a('生成静态文件',\yii\helpers\Url::to(['goods/show','id'=>$row->id]),['class'=>'btn btn-success btn-sm'])?>
                 <?php echo \yii\bootstrap\Html::a('修改',\yii\helpers\Url::to(['goods/update','id'=>$row->id]),['class'=>'btn btn-primary btn-sm'])?>
                 <?php echo \yii\bootstrap\Html::submitButton('删除',['class'=>'btn btn-danger btn-sm','id'=>$row->id])?>
             </td>

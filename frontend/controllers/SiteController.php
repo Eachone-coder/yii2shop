@@ -77,7 +77,12 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+            /*
+            * 首页静态化，商品详情页静态化
+            */
+            $contents=$this->render('index');
+            file_put_contents('index.html',$contents);
+            return $this->render('@web/index.html');
     }
     
 
@@ -205,20 +210,28 @@ class SiteController extends Controller
     }
 
     public function actionSms($phone){
+        $redis=new \Redis();
+        $redis->open('127.0.0.1','6379');
+        //短信防盗刷
+        $ttl=$redis->ttl('valid_'.$phone);
+        //25*60 < $ttl 距离上次发送不到一分钟
+        if ($ttl && $ttl>29*60){
+            return Json::encode(['status'=>'抱歉短信需要在'.(1800-$ttl).'分钟后才能重新发送']);
+        }
         //对手机号正则验证
         $pattern='/^1\d{10}$/';
         $result=preg_match($pattern,$phone);
+
         if ($result){
                 $valid=mt_rand(1000,9999);
                 $res=Yii::$app->sms->send($phone,$valid);
                 if ($res->Code=="OK"){
                     //发送成功
                     //将验证码存入redis或者session
-                    $redis=new \Redis();
-                    $redis->open('127.0.0.1','6379');
-                    $redis->set('valid_'.$phone,$valid,24*3600);
+
+                    $redis->set('valid_'.$phone,$valid,30*60);
                     //存入当前手机号码
-                    $redis->set($phone.'_number',$phone,24*3600);
+                    $redis->set($phone.'_number',$phone,30*60);
                     return Json::encode(['status'=>'true']);
                 }else{
                     //发送失败

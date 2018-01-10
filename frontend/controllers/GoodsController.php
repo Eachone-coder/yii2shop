@@ -42,14 +42,25 @@ class GoodsController extends BaseController{
      * @return string
      */
     public function actionGoods($id){
-        $goods=Goods::findOne(['id'=>$id]);
-        $goodsIntro=GoodsIntro::findOne(['goods_id'=>$id]);
-        $goodsGallery=GoodsGallery::findAll(['goods_id'=>$id]);
-        Goods::updateAllCounters(['view_times'=>1],['id'=>$id]);
-        $first=array_shift($goodsGallery);
-        return $this->render('goods',['goods'=>$goods,'goodsIntro'=>$goodsIntro,'goodsGallery'=>$goodsGallery,'first'=>$first]);
+        //$goods=Goods::findOne(['id'=>$id]);
+        //$goodsIntro=GoodsIntro::findOne(['goods_id'=>$id]);
+        //$goodsGallery=GoodsGallery::findAll(['goods_id'=>$id]);
+        //$redis=new \Redis();
+        //$redis->open('127.0.0.1','6379');
+        //$result=$redis->incr('view_times'.$id);
+        //$goods->view_times=$result;
+        //$first=array_shift($goodsGallery);
+        //$contents=$this->render('goods',['goods'=>$goods,'goodsIntro'=>$goodsIntro,'goodsGallery'=>$goodsGallery,'first'=>$first]);
+        //file_put_contents('goods/'.$id.'.html',$contents);
+        return $this->redirect('/goods/'.$id.'.html');
     }
 
+    public function actionGetViews($id){
+        $redis=new \Redis();
+        $redis->open('127.0.0.1','6379');
+        $view=$redis->incrBy('views_'.$id,1);
+        return Json::encode($view);
+    }
 
     /**
      * @return string
@@ -207,7 +218,11 @@ class GoodsController extends BaseController{
         }
     }
 
-    //提交订单页
+    /**
+     * 提交订单页
+     * @return string|\yii\web\Response
+     * @throws Exception
+     */
     public function actionOrder(){
         if (Cart::findAll(['member_id'=>\Yii::$app->user->id])){
             $model=new Order();
@@ -226,10 +241,12 @@ class GoodsController extends BaseController{
             $request=\Yii::$app->request;
             if ($request->isPost){
                 $model->load($request->post(),'');
-                //var_dump($model);die;
 
                 $post_data=$request->post();
-                //var_dump($request->post());die;
+                if (!isset($post_data['address_id'])){
+                    $this->errorJump(Url::to(['member/address']),'暂无售后地址',3);
+                    return;
+                }
                 //收货地址
                 $address=Address::findOne(['id'=>$post_data['address_id']]);
                 //var_dump($address);die;
@@ -251,11 +268,21 @@ class GoodsController extends BaseController{
                 $model->trade_no='pay001';
                 $model->total=0;
                 $model->create_time=time();
-
+                /*
+                    解决高并发下的库存判断，防止超卖
+                思路
+                    1.先将商品的数量存入redis    比如说为一个商品  set(order,stock)
+                    2.先对redis中的库存做操作,减少并判断,大于0的话继续执行操作数据库,小于0抛出异常
+                      使用decrBy(),返回值为int,
+                    3.
+                */
+                $redis=new \Redis();
+                $redis->open('127.0.0.1','6379');
+                //提前将商品的库存保存到redis
+                $redis->set('goods_stock3',8);
                 //开启事务
                 $transaction=\Yii::$app->db->beginTransaction();
                 try{
-                    //var_dump($model);die;
                     if ($model->validate()){
                         $model->save();
                     }
@@ -264,28 +291,41 @@ class GoodsController extends BaseController{
                     }
                     //总金额
                     $sum=0;
-                    //order_goods表
-                    foreach ($carts as $cart){
-                        $goods=Goods::findOne(['id'=>$cart->goods_id]);
-                        if ($goods->stock>=$cart->amount){
-                            $order_goods=new OrderGoods();
-                            $order_goods->order_id=$model->id;
-                            $order_goods->goods_id=$cart->goods_id;
-                            $order_goods->goods_name=$goods_name[$cart->goods_id];
-                            $order_goods->logo=$goods_logo[$cart->goods_id];
-                            $order_goods->price=$goods_price[$cart->goods_id];
-                            $order_goods->amount=$cart->amount;
-                            $order_goods->total=$cart->amount*$goods_price[$cart->goods_id];
-                            $sum+=$order_goods->total;
-                            $order_goods->save();
-                            //
-                            $goods->stock-=$order_goods->amount;
-                            $goods->save(false);
 
-                            //
+                   //order_goods表
+                    foreach ($carts as $cart){
+                        //减少redis的库存并判断     扣减并判断库存
+                        $result=$redis->decrBy('goods_stock'.$cart->goods_id,$cart->amount);
+                        //此时goods_stock  的格式为: ['goods_id'=>amount,...]
+                        //将减少的goods保存,以便后面的回滚
+                        $redis->hSet('reduce_amount'.$model->id,$cart->goods_id,$cart->amount);
+
+                        if ($result>=0){
+                            //操作数据库
+                            $goods=Goods::findOne(['id'=>$cart->goods_id]);
+                            if ($goods->stock>=$cart->amount){
+                                $order_goods=new OrderGoods();
+                                $order_goods->order_id=$model->id;
+                                $order_goods->goods_id=$cart->goods_id;
+                                $order_goods->goods_name=$goods_name[$cart->goods_id];
+                                $order_goods->logo=$goods_logo[$cart->goods_id];
+                                $order_goods->price=$goods_price[$cart->goods_id];
+                                $order_goods->amount=$cart->amount;
+                                $order_goods->total=$cart->amount*$goods_price[$cart->goods_id];
+                                $sum+=$order_goods->total;
+                                $order_goods->save();
+                                //
+                                $goods->stock-=$order_goods->amount;
+                                $goods->save(false);
+
+                                //
+                            }else{
+                                throw new Exception('库存不足');
+                            }
                         }else{
                             throw new Exception('库存不足');
                         }
+
                     }
                     $model->total=$sum+$model->delivery_price;
                     $model->save();
@@ -293,11 +333,22 @@ class GoodsController extends BaseController{
                     Cart::deleteAll(['member_id'=>\Yii::$app->user->identity->id]);
                     //提交事务
                     $transaction->commit();
+                    //发送短信提示
+                    $this->SendEmail('您购买的商品正在处理中');
                     return $this->redirect(['goods/order-goods']);
                 }catch (Exception $exception){
                     //事务回滚
-                    $this->errorJump(Url::to(['goods/cart']),'库存不足',3);
                     $transaction->rollBack();
+                    //恢复redis扣减的库存
+                    //redis库存不足
+                    $nums=$redis->hGetAll('reduce_amount'.$model->id);
+                    foreach ($nums as $num){
+                        $redis->incrBy('goods_stock'.$cart->goods_id,$num);
+                    }
+                    //删除
+                    $redis->del('reduce_amount'.$model->id);
+
+                    $this->errorJump(Url::to(['goods/cart']),'库存不足',3);
                 }
             }else{
                 return $this->render('order',['address'=>$address,'goods'=>$goods,'amount'=>$amount]);
@@ -316,6 +367,7 @@ class GoodsController extends BaseController{
     }
 
     /**
+     * 订单列表
      * @return string
      */
     public function actionOrderList(){
@@ -324,12 +376,29 @@ class GoodsController extends BaseController{
         return $this->render('order-list',['rows'=>$model,'gallerys'=>$gallerys]);
     }
 
+    /**
+     * 发送邮箱
+     * @return bool
+     */
+    public function SendEmail($msg){
+        $result=\Yii::$app->mailer->compose()
+             ->setFrom('18180402309@163.com')
+             ->setTo(\Yii::$app->user->identity->email)
+             ->setSubject('岛上书店')
+             ->setHtmlBody($msg)
+             ->send();
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
     public function behaviors()
     {
         return [
             'access'=>[
                 'class'=>AccessControl::className(),
-                'except' => ['goods-category','goods','search','add-to-cart','cart','edit-amount','del-amount'],
+                'except' => ['goods-category','goods','search','add-to-cart','cart','edit-amount','del-amount','get-views'],
                 'rules' => [
                     [
                         'allow'=>true,

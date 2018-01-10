@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use backend\filter\RbacFilter;
 use backend\models\Brand;
 use backend\models\Goods;
 use backend\models\GoodsDayCount;
@@ -12,7 +11,6 @@ use backend\models\GoodsSearchForm;
 use yii\data\Pagination;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use yii\web\Controller;
 use yii\web\UploadedFile;
 // 引入鉴权类
 use Qiniu\Auth;
@@ -24,6 +22,7 @@ class GoodsController extends BaseController
     public $enableCsrfValidation = false;
 
     /**
+     * 商品首页
      * @return string
      */
     public function actionIndex()
@@ -59,6 +58,10 @@ class GoodsController extends BaseController
         return $this->render('index', ['goods' => $goods, 'rows' => $rows, 'pager' => $pager]);
     }
 
+    /**
+     * 添加商品
+     * @return string|\yii\web\Response
+     */
     public function actionAdd()
     {
         $model = new Goods();
@@ -198,10 +201,28 @@ class GoodsController extends BaseController
         return $this->render('gallery', ['rows' => $rows, 'goods_id' => $id]);
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     public function actionShow($id){
-        $row=GoodsIntro::findOne(['goods_id'=>$id]);
-        $gallerys=GoodsGallery::findAll(['goods_id'=>$id]);
-        return $this->render('show',['row'=>$row,'gallerys'=>$gallerys]);
+        $this->layout=false;
+        $goods=Goods::findOne(['id'=>$id]);                 //商品
+        $row=GoodsIntro::findOne(['goods_id'=>$id]);        //商品简介
+        $gallerys=GoodsGallery::findAll(['goods_id'=>$id]); //商品相册
+
+        /*
+        生成静态文件
+        */
+        //1.开启ob缓存
+        ob_start();
+        //2.将文件保存为静态文件
+        $contents=$this->render('@webroot/tpl/goods.php',['goods'=>$goods,'row'=>$row,'gallerys'=>$gallerys]);
+        //3.输出
+        file_put_contents(\Yii::getAlias('@frontend').'/web/goods/'.$id.'.html',$contents);
+        //关闭
+        ob_clean();
+        return $this->errorJump(Url::to(['goods/index']),'生成静态页面成功');
     }
     /**
      * @return array

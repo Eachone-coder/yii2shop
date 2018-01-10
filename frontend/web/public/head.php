@@ -4,7 +4,7 @@
 <div class="header w1210 bc mt15">
     <!-- 头部上半部分 start 包括 logo、搜索、用户中心和购物车结算 -->
     <div class="logo w1210">
-        <h1 class="fl"><a href="<?=\yii\helpers\Url::to(['site/index'])?>"><img src="/images/logo.png" alt="京西商城" ></a></h1>
+        <h1 class="fl"><a href="<?=\yii\helpers\Url::to(['site/index'])?>"><img src="/images/logo.png" alt="岛上书店" ></a></h1>
         <!-- 头部搜索 start -->
         <div class="search fl">
             <div class="search_form">

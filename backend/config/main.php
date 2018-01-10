@@ -59,7 +59,7 @@ return [
             'class'=>\yii\web\UrlManager::className(),  //指定实现类
             'enablePrettyUrl' => true,      //开启URL美化
             'showScriptName' => false,      //是否显示index.php
-            //'suffix'=>'html',
+            'suffix'=>'.html',
             'rules' => [
                 //配置规则
                 //'add'=>'goods/add',
