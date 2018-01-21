@@ -15,8 +15,6 @@ class ViewsController extends Controller{
         $id=1;
         while($id<$max){
             $views=$redis->get('views_'.$id);
-            echo iconv('utf-8','gbk',$views);
-            echo "\n";
             if ($views){
                 Goods::updateAll(['view_times'=>$views],['id'=>$id]);
             }

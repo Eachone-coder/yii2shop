@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use backend\models\Member;
 
+use common\models\SphinxClient;
 use frontend\models\MemberForm;
 use Yii;
 use yii\base\InvalidParamException;
@@ -258,4 +259,5 @@ class SiteController extends Controller
             return 'false';
         }
     }
+
 }

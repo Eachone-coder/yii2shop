@@ -121,6 +121,7 @@ class BrandController extends BaseController
      * @throws \Exception
      */
     public function actionUpload(){
+
         $model=UploadedFile::getInstanceByName('file');
         //如果上传则移动
         if ($model){

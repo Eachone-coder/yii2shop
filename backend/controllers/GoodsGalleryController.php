@@ -1,9 +1,7 @@
 <?php
 namespace backend\controllers;
 
-use backend\filter\RbacFilter;
 use backend\models\GoodsGallery;
-use yii\web\Controller;
 use yii\web\UploadedFile;
 // 引入鉴权类
 use Qiniu\Auth;

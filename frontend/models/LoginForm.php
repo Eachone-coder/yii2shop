@@ -15,7 +15,7 @@ class LoginForm extends Model{
             return [
                 [['username','password'],'required'],
                 ['rememberMe','safe'],
-                ['checkcode','captcha','captchaAction' => 'site/captcha'],
+                ['checkcode','captcha','captchaAction' => 'site/captcha','message' => '验证码不正确'],
             ];
         }
         public function check(){

@@ -5,6 +5,7 @@ use backend\models\GoodsCategory;
 use backend\models\GoodsGallery;
 use backend\models\GoodsIntro;
 use backend\models\Goods;
+use common\models\SphinxClient;
 use frontend\models\Address;
 use frontend\models\Cart;
 use frontend\models\Order;
@@ -68,9 +69,29 @@ class GoodsController extends BaseController{
     public function actionSearch(){
         $request=\Yii::$app->request;
         //var_dump($request->get('keywords'));
-        $goods=Goods::find()->where(['LIKE','name',$request->get('keywords')])->all();
+        //$goods=Goods::find()->where(['LIKE','name',$request->get('keywords')])->all();
+        $cl = new SphinxClient();
+        $cl->SetServer ( '127.0.0.1', 9312);
+        $cl->SetConnectTimeout ( 10 );
+        $cl->SetArrayResult ( true );
+//      $cl->SetMatchMode ( SPH_MATCH_ANY);
+        $cl->SetMatchMode ( SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 1000);
+        $info = $request->get('keywords');
+        $res = $cl->Query($info, 'mysql');//shopstore_search
+        //print_r($res);
+        $ids=[];
+        if ($res['total']){
+            foreach ($res['matches'] as $re){
+                $ids[]=$re['id'];
+            }
+        }
+        $goods=Goods::find()->where(['in','id',$ids])->all();
+        //print_r($ids);
+        //return $ids;
         return $this->render('list',['goods'=>$goods]);
     }
+
     //添加购物车成功提示页面
 
     /**

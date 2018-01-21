@@ -1,7 +1,6 @@
 <?php
 namespace backend\controllers;
 
-
 use backend\models\User;
 use backend\models\UserForm;
 use yii\helpers\Url;
@@ -11,7 +10,6 @@ class AdminController extends BaseController {
     {
         //查邮箱
         $model=User::findOne(['id'=>\Yii::$app->user->identity->getId()]);
-
         return $this->render('index',['model'=>$model]);
     }
 
